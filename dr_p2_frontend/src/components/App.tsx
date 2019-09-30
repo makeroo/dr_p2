@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import WelcomePage from './WelcomePage';
 import NewProblemPage from './NewProblemPage';
-import PrivateRoute from '../utils/PrivateRoute'
+import PrivateRoute from './PrivateRoute'
 import logo from './logo.svg';
 import './App.css';
 
