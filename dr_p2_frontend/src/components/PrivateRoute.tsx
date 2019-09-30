@@ -1,20 +1,16 @@
 import React from 'react'
-import { ComponentType, Component } from 'react'
+import { ComponentType } from 'react'
 import { Route } from "react-router-dom"
 import { connect } from 'react-redux'
-import { Dispatch } from 'react'
+import { ThunkDispatch } from 'redux-thunk'
 
 import { AppState } from '../store/index'
-import { AuthState, AuthActionTypes } from '../store/auth/types'
+import { AuthActionTypes } from '../store/auth/types'
 
-import { declareName } from '../store/auth/actions'
+import { login } from '../store/auth/actions'
 
 // this is what PrivateRoute fc receives
-type PrivateRouteProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> /*>{
-    component: ComponentType
-    auth: AuthState
-    login: (name: String) => void
-}*/
+type PrivateRouteProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
 
 // these are any properties declared in jsx nodes
 interface PrivateRouteTagProps {
@@ -28,11 +24,26 @@ const mapStateToProps = (state: AppState, props: PrivateRouteTagProps) => ({
     ...props
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AuthActionTypes>) => ({
-    login: (name: string) => {
-        dispatch(declareName(name))
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+    login: async (name: string) => {
+        await dispatch(login(name))
+        console.log('Login completed [UI]')
     }
+/*     (name: string) => {
+        dispatch(declareName(name))
+    }*/
 })
+
+/*
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>, ownProps: OwnProps): DispatchProps => {
+  return {
+    login: async (username, password) => {
+      await dispatch(login(username, password))
+      console.log('Login completed [UI]')
+    }
+  }
+}
+*/
 
 const PrivateRoute : React.FC<PrivateRouteProps> = (props: PrivateRouteProps) => {
     const { auth, component, ...rest } = props;
