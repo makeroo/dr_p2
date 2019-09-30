@@ -5,7 +5,7 @@ export interface AuthState {
 
 export const DECLARE_NAME = 'DECLARE_NAME'
 
-interface DeclareNameAction {
+export interface DeclareNameAction {
     type: typeof DECLARE_NAME
     name: string
 }

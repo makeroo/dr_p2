@@ -1,7 +1,7 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
-import { AuthActionTypes, DECLARE_NAME } from './types'
+import { AuthActionTypes, DECLARE_NAME, DeclareNameAction } from './types'
 
 export function declareName(name: string): AuthActionTypes {
     return {
@@ -10,10 +10,10 @@ export function declareName(name: string): AuthActionTypes {
     }
 }
 
-export const login = (username: string): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
+export const login = (username: string): ThunkAction<Promise<AuthActionTypes>, DeclareNameAction, string, DeclareNameAction> => {
     // Invoke API
-    return async (dispatch: ThunkDispatch<{}, {}, AnyAction>): Promise<void> => {
-        return new Promise<void>((resolve) => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<AuthActionTypes> => {
+        return new Promise<AuthActionTypes>((resolve) => {
             //dispatch(isFetching(true))
             console.log('Login in progress')
             setTimeout(() => {
