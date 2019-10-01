@@ -14,9 +14,9 @@ export function authReducer (
             return {
                 loggedIn: true,
                 userName: action.name
-             };
-    
+             }
+
         default:
-            return state;
+            return state
     }
 }
