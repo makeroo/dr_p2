@@ -8,16 +8,16 @@ interface DiscussionRoutingParams {
     id: string
 }
 
-const mapStateToProps = (state: AppState, props: DiscussionRoutingParams) => {
-    // later...
-    console.log(state, props)
-    return {}
+const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionRoutingParams>) => {
+    return {
+        id: props.match!.params.id
+    }
 }
 
-type DiscussionPageProps = ReturnType<typeof mapStateToProps> // & RouteComponentProps<DiscussionRoutingParams>
+type DiscussionPageProps = ReturnType<typeof mapStateToProps> & RouteComponentProps<DiscussionRoutingParams>
 
 const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
-    return <div>disc page todo: {/*props.match!.params.id*/}</div>
+    return <div>disc page todo: {props.id}</div>
 }
 
 export default connect(mapStateToProps)(DiscussionPage)
