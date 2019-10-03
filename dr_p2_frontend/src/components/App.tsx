@@ -1,14 +1,17 @@
 import React from 'react';
 import {
   BrowserRouter as Router,
-  Route,
-  Link,
-  RouteComponentProps
+//  Route,
+//  Link,
+//  RouteComponentProps
 } from "react-router-dom";
-import WelcomePage from './WelcomePage';
+
+import RedirectToNewProblem from './RedirectToNewProblem'
 import NewProblemPage from './NewProblemPage';
 import PrivateRoute from './PrivateRoute'
-import logo from './logo.svg';
+import DiscussionPage from './DiscussionPage'
+
+//import logo from './logo.svg';
 import './App.css';
 
 const App: React.FC = () => {
@@ -16,9 +19,9 @@ const App: React.FC = () => {
     <div className="App">
       <Router >
         <div>
-          <Route exact path="/" component={WelcomePage} />
-          <Route exact path="/problem" component={NewProblemPage} />
-          <PrivateRoute path="/test" component={NewProblemPage} />
+          <PrivateRoute exact path="/" component={RedirectToNewProblem} />
+          <PrivateRoute exact path="/problem" component={NewProblemPage} />
+          <PrivateRoute path="/problem/:id" component={DiscussionPage} />
         </div>
       </Router>
       {/*
