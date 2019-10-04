@@ -1,12 +1,25 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
-import { AuthActionTypes, DECLARE_NAME, DeclareNameAction } from './types'
+import { DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes, AuthState } from './types'
 
-export function declareName(name: string): AuthActionTypes {
+export function declareName(name: string): DeclareNameAction {
     return {
         type: DECLARE_NAME,
         name
+    }
+}
+
+export function pendingRequest(promise: Promise<AuthActionTypes>): PendingRequestAction {
+    return {
+        type: PENDING_REQUEST,
+        promise
+    }
+}
+
+export function notLoggedIn(): NotLoggedInAction {
+    return {
+        type: NOT_LOGGED_IN
     }
 }
 
@@ -28,5 +41,24 @@ export const login = (username: string): ThunkAction<Promise<AuthActionTypes>, D
                 }, 1000)*/
             }, 2000)
       })
+    }
+}
+
+export const getSessionUser = (auth: AuthState) : ThunkAction<Promise<AuthActionTypes>, PendingRequestAction, string, PendingRequestAction> => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<AuthActionTypes> => {
+        if (auth.sessionUser !== undefined) {
+            return auth.sessionUser
+        }
+
+        let p = new Promise<AuthActionTypes>((resolve) => {
+            console.log('sessionUser request in progress')
+            setTimeout(() => {
+                dispatch(notLoggedIn())
+            })
+        })
+
+        dispatch(pendingRequest(p))
+
+        return p
     }
 }
