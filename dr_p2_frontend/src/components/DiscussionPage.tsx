@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { match, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 
 import { AppState } from '../store/index'
 
