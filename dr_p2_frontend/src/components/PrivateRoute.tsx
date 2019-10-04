@@ -1,6 +1,6 @@
 import React from 'react'
 import { ComponentType } from 'react'
-import { Route } from "react-router-dom"
+import { Route, RouteProps } from "react-router-dom"
 import { connect } from 'react-redux'
 
 import { AppState } from '../store/index'
@@ -11,9 +11,8 @@ import WelcomePage from './WelcomePage'
 type PrivateRouteProps = ReturnType<typeof mapStateToProps>
 
 // these are any properties declared in jsx nodes
-interface PrivateRouteTagProps {
-    component: ComponentType<any> // TODO: either null or RouteComponentProps
-    [x: string]: any // TODO: actually, the properties of Route
+interface PrivateRouteTagProps extends RouteProps {
+    component: ComponentType<any> // FIXME: I still don't understand why this definition doesn't work <RouteComponentProps | {}>
 }
 
 // this is where I build PR props from both state and jsx
