@@ -2,6 +2,8 @@ import React from 'react'
 import { ThunkDispatch } from 'redux-thunk'
 import { connect } from 'react-redux'
 
+import i18n from 'i18next'
+
 import { login } from '../store/auth/actions'
 
 type WelcomePageProps = ReturnType<typeof mapDispatchToProps>
@@ -22,7 +24,7 @@ const WelcomePage: React.FC<WelcomePageProps> = (props) => {
 
     return (
         <div className="welcome-page">
-            welcome page
+            {i18n.t('welcome_page')}
             <div>login <button onClick={handleLogin}>Login as pippo</button></div>
         </div>
     )
