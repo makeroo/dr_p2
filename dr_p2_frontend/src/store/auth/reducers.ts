@@ -1,8 +1,8 @@
 import { AuthState, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes } from './types'
 
 const initialState : AuthState = {
-    // workflow: querytodo -> queryrunning -> loggedin / notloggedin
-    // feedback:      loading                 req page / welcome page
+    // workflow: querytbd -> queryrunning -> loggedin / notloggedin
+    // feedback:        loading              req page / welcome page
     // state:    l.ing:T/pr:U l.ing:T/pr:D    l.ing:F un:U  / l.ing:F un:D
 
     loading: true,
