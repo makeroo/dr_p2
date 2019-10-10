@@ -10,6 +10,7 @@ export interface DeclareNameAction {
 export interface PendingRequestAction {
     type: typeof PENDING_REQUEST
     promise: Promise<AuthActionTypes>
+    state: QueryState
 }
 
 export interface NotLoggedInAction {
@@ -18,8 +19,14 @@ export interface NotLoggedInAction {
 
 export type AuthActionTypes = DeclareNameAction | PendingRequestAction | NotLoggedInAction
 
+export enum QueryState {
+    setup,
+    signingIn,
+    done
+}
+
 export interface AuthState {
-    loading: boolean
+    state: QueryState
     loggedIn: boolean
     userName?: string
     sessionUser?: Promise<AuthActionTypes>

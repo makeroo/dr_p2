@@ -1,4 +1,5 @@
 export const CREATE_PROBLEM = 'CREATE_PROBLEM'
+export const CREATING_PROBLEM = 'CREATING_PROBLEM'
 
 export interface CreateProblemAction {
     type: typeof CREATE_PROBLEM
@@ -6,7 +7,11 @@ export interface CreateProblemAction {
     question: string
 }
 
-export type DiscussionActionTypes = CreateProblemAction
+export interface CreatingProblemAction {
+    type: typeof CREATING_PROBLEM
+}
+
+export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction
 
 export interface Thesis {
     id: number
@@ -26,10 +31,16 @@ export interface Relation {
     thesis2: number
 }
 
-// TODO: define an incremental model: client has a "view" of the whole discussion
-export interface DiscussionState {
+export interface Discussion {
     id: number
     question: string
     theses: Thesis[]
     relations: Relation[]
+}
+
+// TODO: define an incremental model: client has a "view" of the whole discussion
+export interface DiscussionState {
+    loading: boolean
+
+    discussion?: Discussion
 }

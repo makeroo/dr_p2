@@ -1,10 +1,7 @@
-import { DiscussionState, CREATE_PROBLEM, DiscussionActionTypes } from './types'
+import { DiscussionState, CREATE_PROBLEM, CREATING_PROBLEM, DiscussionActionTypes } from './types'
 
 const initialState : DiscussionState = {
-    id: 0,
-    question: '',
-    theses: [],
-    relations: []
+    loading: false
 }
 
 export function discussionReducer (
@@ -14,13 +11,21 @@ export function discussionReducer (
     switch (action.type) {
         case CREATE_PROBLEM:
             return {
-                id: action.id,
-                question: action.question,
-                theses: [],
-                relations: []
+                loading: false,
+                discussion: {
+                    id: action.id,
+                    question: action.question,
+                    theses: [],
+                    relations: []
+                }
             }
 
-        default:
+        case CREATING_PROBLEM:
+            return {
+                loading: true
+            }
+
+            default:
             return state
     }
 }

@@ -1,7 +1,7 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
-import { DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes, AuthState } from './types'
+import { QueryState, DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes, AuthState } from './types'
 
 export function declareName(name: string): DeclareNameAction {
     return {
@@ -10,10 +10,11 @@ export function declareName(name: string): DeclareNameAction {
     }
 }
 
-export function pendingRequest(promise: Promise<AuthActionTypes>): PendingRequestAction {
+export function pendingRequest(promise: Promise<AuthActionTypes>, state: QueryState): PendingRequestAction {
     return {
         type: PENDING_REQUEST,
-        promise
+        promise,
+        state
     }
 }
 
@@ -26,21 +27,19 @@ export function notLoggedIn(): NotLoggedInAction {
 export const login = (username: string): ThunkAction<Promise<AuthActionTypes>, DeclareNameAction, string, DeclareNameAction> => {
     // Invoke API
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<AuthActionTypes> => {
-        return new Promise<AuthActionTypes>((resolve) => {
-            //dispatch(isFetching(true))
-            console.log('Login in progress')
+        let p = new Promise<AuthActionTypes>((resolve) => {
+            //console.log('Login in progress')
+
             setTimeout(() => {
                 dispatch(declareName(username))
 
                 resolve()
-
-                /*setTimeout(() => {
-                    dispatch(isFetching(false))
-                    console.log('Login done')
-                    resolve()
-                }, 1000)*/
             }, 2000)
       })
+
+      dispatch(pendingRequest(p, QueryState.signingIn))
+
+      return p
     }
 }
 
@@ -51,13 +50,14 @@ export const getSessionUser = (auth: AuthState) : ThunkAction<Promise<AuthAction
         }
 
         let p = new Promise<AuthActionTypes>((resolve) => {
-            console.log('sessionUser request in progress')
+            //console.log('sessionUser request in progress')
+
             setTimeout(() => {
                 dispatch(notLoggedIn())
             })
         })
 
-        dispatch(pendingRequest(p))
+        dispatch(pendingRequest(p, QueryState.setup))
 
         return p
     }

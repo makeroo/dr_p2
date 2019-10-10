@@ -17,6 +17,8 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionR
 type DiscussionPageProps = ReturnType<typeof mapStateToProps> & RouteComponentProps<DiscussionRoutingParams>
 
 const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
+    // TODO: check that props.id matches discussion.id
+
     return <div>disc page todo: {props.id}</div>
 }
 

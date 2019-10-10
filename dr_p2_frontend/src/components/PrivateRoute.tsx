@@ -9,7 +9,7 @@ import { AppState } from '../store/index'
 import WelcomePage from './WelcomePage'
 import Loading from './Loading'
 import { getSessionUser } from '../store/auth/actions'
-import { AuthState } from '../store/auth/types'
+import { QueryState, AuthState } from '../store/auth/types'
 
 // this is what PrivateRoute fc receives
 type PrivateRouteProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
@@ -42,9 +42,10 @@ const PrivateRoute : React.FC<PrivateRouteProps> = (props) => {
     const InnerComponent = component
 
     return <Route {...rest} render={(props) => {
-        if (auth.loading) {
+        if (auth.state === QueryState.setup) {
             return <Loading/>
         }
+
         if (auth.loggedIn) {
             return <InnerComponent {...props}/>
         }

@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { newProblem } from '../store/discussion/actions'
 import { RootState } from '../store/index'
@@ -16,7 +17,8 @@ import { RootState } from '../store/index'
 type NewProblemPageProps = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>
 
 const mapStateToProps = (state: RootState, props: RouteComponentProps) => ({
-    history: props.history
+    history: props.history,
+    loading: state.discussion.loading
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
@@ -29,15 +31,10 @@ const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
     const { newProblem, history } = props
 
     const inputEl = useRef<HTMLInputElement>(null);
-    var newProblemPromise : Promise<any> | null = null;
 
     const handleCreateProblem = () => {
-        if (newProblemPromise !== null) {
-            return
-        }
-
         if (inputEl && inputEl.current) {
-            newProblemPromise = newProblem(inputEl.current.value).then((v) => {
+            newProblem(inputEl.current.value).then((v) => {
                 //console.log('newproblem result:', v)
                 history.push(`/problem/${v}`)
             }).catch((error) => {
@@ -51,7 +48,11 @@ const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
             <Typography>{i18n.t('Create a new problem to be discussed.')}</Typography>
             <Typography>{i18n.t('Type in your question:')}</Typography>
             <TextField inputRef={inputEl}></TextField>
-            <Button variant="contained" color="primary" onClick={handleCreateProblem}>{i18n.t('start')}</Button>
+            { props.loading ?
+                <CircularProgress/>
+                :
+                <Button variant="contained" color="primary" onClick={handleCreateProblem}>{i18n.t('start')}</Button>
+            }
        </Container>
     );
 }
