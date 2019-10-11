@@ -35,7 +35,11 @@ const PrivateRoute : React.FC<PrivateRouteProps> = (props) => {
     const { auth, getSessionUser, component, ...rest } = props;
 
     useEffect(() => {
-        console.log('querying session user')
+        //console.log('querying session user')
+
+        // note: getSessionUser gets called once per PrivateRoute instance
+        // I could move this block where Router is configured, that is in App component,
+        // but I prefer here because App would get cluttered
         getSessionUser(auth)
     }, [])
 
