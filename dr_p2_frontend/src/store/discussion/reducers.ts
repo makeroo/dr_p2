@@ -1,4 +1,4 @@
-import { DiscussionState, CREATE_PROBLEM, CREATING_PROBLEM, DiscussionActionTypes } from './types'
+import { DiscussionState, CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, DiscussionActionTypes } from './types'
 
 const initialState : DiscussionState = {
     loading: false
@@ -25,7 +25,13 @@ export function discussionReducer (
                 loading: true
             }
 
-            default:
+        case LOAD_DISCUSSION:
+            return {
+                loading: false,
+                discussion: action.discussion,
+            }
+
+        default:
             return state
     }
 }

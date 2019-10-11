@@ -1,5 +1,6 @@
 export const CREATE_PROBLEM = 'CREATE_PROBLEM'
 export const CREATING_PROBLEM = 'CREATING_PROBLEM'
+export const LOAD_DISCUSSION = 'LOAD_DISCUSSION'
 
 export interface CreateProblemAction {
     type: typeof CREATE_PROBLEM
@@ -11,7 +12,12 @@ export interface CreatingProblemAction {
     type: typeof CREATING_PROBLEM
 }
 
-export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction
+export interface LoadDiscussionAction {
+    type: typeof LOAD_DISCUSSION
+    discussion: Discussion
+}
+
+export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction
 
 export interface Thesis {
     id: number
