@@ -4,11 +4,11 @@ import { connect } from 'react-redux'
 
 import i18n from 'i18next'
 
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Container from '@material-ui/core/Container'
+import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { login } from '../store/auth/actions'
 import { QueryState } from '../store/auth/types'
