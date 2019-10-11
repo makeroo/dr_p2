@@ -1,8 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
+import { useEffect } from 'react'
+import { ThunkDispatch } from 'redux-thunk'
+
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography'
+import CircularProgress from '@material-ui/core/CircularProgress'
+
+import i18n from 'i18next'
 
 import { AppState } from '../store/index'
+import { getDiscussion } from '../store/discussion/actions'
 
 interface DiscussionRoutingParams {
     id: string
@@ -10,16 +19,45 @@ interface DiscussionRoutingParams {
 
 const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionRoutingParams>) => {
     return {
-        id: props.match!.params.id
+        query_id: +props.match!.params.id,
+        loading: state.discussion.loading,
+        discussion: state.discussion.discussion
     }
 }
 
-type DiscussionPageProps = ReturnType<typeof mapStateToProps> & RouteComponentProps<DiscussionRoutingParams>
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+    getDiscussion: async (id: number) => {
+        dispatch(getDiscussion(id))
+    }
+})
+
+type DiscussionPageProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps<DiscussionRoutingParams>
 
 const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
-    // TODO: check that props.id matches discussion.id
+    const { query_id, loading, discussion, getDiscussion } = props
 
-    return <div>disc page todo: {props.id}</div>
+    useEffect(() => {
+        //console.log('check if query id matches discussion id')
+
+        if (loading ||
+            (discussion && discussion.id === query_id)
+            ) {
+            return
+        }
+
+        getDiscussion(query_id)
+    }, [])
+
+    return (loading ?
+        <Container>
+            <Typography>{i18n.t('loading discussion')}</Typography>
+            <CircularProgress/>
+        </Container>
+        :
+        <Container>
+            <Typography>disc page todo: {query_id} / {discussion ? discussion.id : '-'}</Typography>
+        </Container>
+    )
 }
 
-export default connect(mapStateToProps)(DiscussionPage)
+export default connect(mapStateToProps, mapDispatchToProps)(DiscussionPage)
