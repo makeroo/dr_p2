@@ -8,8 +8,7 @@ import i18n from 'i18next'
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import ButtonWithLoading from '../utils/components/ButtonWithLoading'
 
 import { newProblem } from '../store/discussion/actions'
 import { RootState } from '../store/index'
@@ -48,11 +47,12 @@ const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
             <Typography>{i18n.t('Create a new problem to be discussed.')}</Typography>
             <Typography>{i18n.t('Type in your question:')}</Typography>
             <TextField inputRef={inputEl}></TextField>
-            { props.loading ?
-                <CircularProgress/>
-                :
-                <Button variant="contained" color="primary" onClick={handleCreateProblem}>{i18n.t('start')}</Button>
-            }
+            <ButtonWithLoading
+                loading={props.loading}
+                success={false}
+                label={i18n.t('start')}
+                onClick={handleCreateProblem}
+                />
        </Container>
     );
 }

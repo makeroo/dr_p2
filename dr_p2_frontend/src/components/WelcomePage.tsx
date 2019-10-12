@@ -7,8 +7,7 @@ import i18n from 'i18next'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import ButtonWithLoading from '../utils/components/ButtonWithLoading'
 
 import { login } from '../store/auth/actions'
 import { QueryState } from '../store/auth/types'
@@ -42,11 +41,12 @@ const WelcomePage: React.FC<WelcomePageProps> = (props) => {
             <Typography>{i18n.t('Welcome on Democracy Revisited')}</Typography>
             <Typography>{i18n.t('Type in your name and start to discuss')}</Typography>
             <TextField inputRef={inputEl}></TextField>
-            { props.state === QueryState.done ?
-              <Button variant="contained" color="primary" onClick={handleLogin}>{i18n.t('signin')}</Button>
-              :
-              <CircularProgress/>
-            }
+            <ButtonWithLoading
+            loading={props.state === QueryState.signingIn}
+            success={false}
+            label={i18n.t('signin')}
+            onClick={handleLogin}
+            />
         </Container>
     )
 }
