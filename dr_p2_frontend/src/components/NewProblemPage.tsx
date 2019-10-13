@@ -46,7 +46,12 @@ const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
         <Container>
             <Typography>{i18n.t('Create a new problem to be discussed.')}</Typography>
             <Typography>{i18n.t('Type in your question:')}</Typography>
-            <TextField inputRef={inputEl}></TextField>
+            <TextField
+                inputRef={inputEl}
+                InputProps={{
+                    readOnly: props.loading,
+                }}
+                />
             <ButtonWithLoading
                 loading={props.loading}
                 success={false}
