@@ -1,4 +1,5 @@
 import { DiscussionState, CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, DiscussionActionTypes } from './types'
+import { indexDiscussion } from './utils'
 
 const initialState : DiscussionState = {
     loading: false
@@ -10,14 +11,16 @@ export function discussionReducer (
 ): DiscussionState {
     switch (action.type) {
         case CREATE_PROBLEM:
+            let d = {
+                id: action.id,
+                question: action.question,
+                theses: [],
+                relations: []
+            }
             return {
                 loading: false,
-                discussion: {
-                    id: action.id,
-                    question: action.question,
-                    theses: [],
-                    relations: []
-                }
+                discussion: d,
+                indexedDiscussion: indexDiscussion(d)
             }
 
         case CREATING_PROBLEM:
@@ -29,6 +32,7 @@ export function discussionReducer (
             return {
                 loading: false,
                 discussion: action.discussion,
+                indexedDiscussion: indexDiscussion(action.discussion),
             }
 
         default:

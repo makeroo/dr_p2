@@ -49,4 +49,22 @@ export interface DiscussionState {
     loading: boolean
 
     discussion?: Discussion
+    indexedDiscussion?: IndexedDiscussion
+}
+
+interface ThesesIndex {
+    [id: string]: Thesis
+}
+
+export interface RelationIndex {
+    [from: string]: number[]
+}
+
+export interface IndexedDiscussion {
+    theses: ThesesIndex
+    solutions: Thesis[]
+
+    supports: RelationIndex
+    invertedSupports: RelationIndex
+    contradictions: RelationIndex
 }
