@@ -7,11 +7,13 @@ import { ThunkDispatch } from 'redux-thunk'
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Grid from '@material-ui/core/Grid'
 
 import i18n from 'i18next'
 
 import { AppState } from '../store/index'
 import { getDiscussion } from '../store/discussion/actions'
+import Solutions from './discussion_page/Solutions'
 
 interface DiscussionRoutingParams {
     id: string
@@ -48,14 +50,21 @@ const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
         getDiscussion(query_id)
     }, [])
 
-    return (loading ?
+    return (loading || !discussion ?
         <Container>
             <Typography>{i18n.t('loading discussion')}</Typography>
             <CircularProgress/>
         </Container>
         :
         <Container>
-            <Typography>disc page todo: {query_id} / {discussion ? discussion.id : '-'}</Typography>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Typography>{discussion.question}</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                    <Solutions/>
+                </Grid>
+            </Grid>
         </Container>
     )
 }
