@@ -1,4 +1,6 @@
-import { DiscussionState, CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, DiscussionActionTypes } from './types'
+import { DiscussionState, DiscussionActionTypes, Thesis,
+    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY
+} from './types'
 import { indexDiscussion } from './utils'
 
 const initialState : DiscussionState = {
@@ -35,6 +37,59 @@ export function discussionReducer (
                 indexedDiscussion: indexDiscussion(action.discussion),
             }
 
+        case WORKING_ON_DISCUSSION:
+            return {
+                ...state,
+                loading: true
+            }
+
+        case DISCUSSION_READY:
+                return {
+                    ...state,
+                    loading: false
+                }
+
+        case ADD_THESIS:
+            const discussion = state.discussion
+            const indexedDiscussion = state.indexedDiscussion
+
+            if (discussion && indexedDiscussion) {
+                let theses_index = {
+                    ...indexedDiscussion.theses
+                }
+
+                theses_index[action.thesis.id] = action.thesis
+
+                let solutions;
+
+                if (action.thesis.solution) {
+                    solutions = [
+                        ...indexedDiscussion.solutions,
+                        action.thesis
+                    ]
+                } else {
+                    solutions = indexedDiscussion.solutions
+                }
+
+                return {
+                    ...state,
+                    discussion: {
+                        ...discussion,
+                        theses: [
+                            ...discussion.theses,
+                            action.thesis
+                        ]
+                    },
+                    indexedDiscussion: {
+                        ...indexedDiscussion,
+                        theses: theses_index,
+                        solutions
+                    }
+                }
+            } else {
+                // cannot happen
+                return state
+            }
         default:
             return state
     }

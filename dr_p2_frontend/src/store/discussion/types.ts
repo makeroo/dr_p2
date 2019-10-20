@@ -1,6 +1,9 @@
 export const CREATE_PROBLEM = 'CREATE_PROBLEM'
 export const CREATING_PROBLEM = 'CREATING_PROBLEM'
 export const LOAD_DISCUSSION = 'LOAD_DISCUSSION'
+export const ADD_THESIS = 'ADD_THESIS'
+export const WORKING_ON_DISCUSSION = 'WORKING_ON_DISCUSSION'
+export const DISCUSSION_READY = 'DISCUSSION_READY'
 
 export interface CreateProblemAction {
     type: typeof CREATE_PROBLEM
@@ -17,7 +20,20 @@ export interface LoadDiscussionAction {
     discussion: Discussion
 }
 
-export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction
+export interface WorkingOnDiscussionAction {
+    type: typeof WORKING_ON_DISCUSSION
+}
+
+export interface DiscussionReadyAction {
+    type: typeof DISCUSSION_READY
+}
+
+export interface AddThesisAction {
+    type: typeof ADD_THESIS
+    thesis: Thesis
+}
+
+export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction | WorkingOnDiscussionAction | DiscussionReadyAction | AddThesisAction
 
 export interface Thesis {
     id: number
@@ -46,6 +62,10 @@ export interface Discussion {
 
 // TODO: define an incremental model: client has a "view" of the whole discussion
 export interface DiscussionState {
+    /* if discussion is undefined and loading is true then
+     * we're loading the whole discussion (or a view of it)
+     * otherwise we're working / modifying it
+     */
     loading: boolean
 
     discussion?: Discussion

@@ -1,34 +1,89 @@
 import React from 'react'
+import { useRef } from 'react'
 import { connect } from 'react-redux'
-import Container from '@material-ui/core/Container';
+import { ThunkDispatch } from 'redux-thunk'
+
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useMediaQuery } from '@material-ui/core';
+import { useTheme } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+import AddIcon from '@material-ui/icons/Add'
+import TextField from '@material-ui/core/TextField'
+
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 
 import i18n from 'i18next'
 
 import { AppState } from '../../store/index'
-import { useMediaQuery } from '@material-ui/core';
-import { useTheme } from '@material-ui/styles';
-import { Theme } from '@material-ui/core/styles/createMuiTheme'
+import { addDialog } from '../../store/explorer/actions'
+import { postThesis } from '../../store/discussion/actions';
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
     //discussion: state.discussion.discussion!,
     indexedDiscussion: state.discussion.indexedDiscussion!,
     page: state.explorer.page,
+    addOpen: state.explorer.addDialog,
 })
 
-type SolutionsProps = ReturnType<typeof mapStateToProps>
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+    openAddDialog: () => {
+        return dispatch(addDialog(true))
+    },
+    closeAddDialog: () => {
+        return dispatch(addDialog(false))
+    },
+    postThesis: (is_solution: boolean, content: string) => {
+        return dispatch(postThesis(is_solution, content))
+    }
+})
+
+type SolutionsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        fab: {
+            position: 'fixed',
+            bottom: theme.spacing(1),
+            right: theme.spacing(1),
+        },
+        thesis: {
+            border: 0,
+            outline: 'none',
+        },
+    }),
+)
 
 const Solutions : React.FC<SolutionsProps> = (props) => {
-    const { indexedDiscussion } = props
+    const classes = useStyles();
+
+    const { indexedDiscussion, openAddDialog, closeAddDialog, addOpen, postThesis } = props
     var { page } = props
     const { solutions, theses, invertedSupports } = indexedDiscussion
 
     const theme = useTheme<Theme>()
     let visibleSolutions
+
+    const inputEl = useRef<HTMLInputElement>(null)
+
+    const submit = () => {
+        closeAddDialog()
+
+        if (inputEl && inputEl.current) {
+            const thesis = inputEl.current.value
+
+            postThesis(true, thesis)
+            console.log('new solution', thesis)
+        }
+    }
 
     const isSmall = useMediaQuery(theme.breakpoints.down('md'))
     const isMedium = useMediaQuery(theme.breakpoints.down('lg'))
@@ -43,40 +98,39 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
 
     let pages = Math.ceil(solutions.length / visibleSolutions)
 
-    if (pages === 0) {
-        return (
-            <Container>
-                <Typography>{i18n.t('no solutions yet')}</Typography>
-                <Fab></Fab>
-            </Container>
-        )
+    if (pages < visibleSolutions) {
+        page = 0;
+    } else if (page < 0) {
+        page = 0;
+    } else if (page >= pages - visibleSolutions) {
+        page = pages - visibleSolutions;
     }
 
-    if (page < 0) {
-        page = 0;
-    } else if (page >= pages) {
-        page = pages - 1;
-    }
+    const fromSol = page * visibleSolutions;
+    const toSol = Math.min(fromSol + visibleSolutions, solutions.length)
 
     let columns : JSX.Element[] = []
 
-    for (let i = 0; i < visibleSolutions; ++i) {
-        const solution = solutions[page * visibleSolutions + i];
+    for (let i = fromSol; i < toSol; ++i) {
+        const solution = solutions[i];
 
         const thesesElements : JSX.Element[] = []
+        const supports = invertedSupports[solution.id]
 
-        for (let thesisId of invertedSupports[solution.id]) {
-            const thesis = theses[thesisId]
-
-            thesesElements.push(
-                <Grid item xs={12}>
-                    <Paper>{thesis.content}</Paper>
-                </Grid>
-            )
+        if (supports) {
+            for (let thesisId of invertedSupports[solution.id]) {
+                const thesis = theses[thesisId]
+    
+                thesesElements.push(
+                    <Grid item xs={12}>
+                        <Paper>{thesis.content}</Paper>
+                    </Grid>
+                )
+            }
         }
 
         columns.push(
-            <Grid item container xs={12} md={4} lg={1}>
+            <Grid item container xs={12} md={4} lg={1} key={solution.id}>
                 <Grid item xs={12}>
                     <Paper>{solution.content}</Paper>
                 </Grid>
@@ -87,11 +141,53 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         )
     }
 
+    if (columns.length === 0) {
+        columns.push(
+            <Grid item xs={12} key={0}>
+                <Typography>{i18n.t('no solutions yet')}</Typography>
+            </Grid>
+        )
+    }
+
     return (
-        <Grid container>
-            { columns }
-        </Grid>
+        <React.Fragment>
+            <Grid container>
+                { columns }
+            </Grid>
+            <Fab color="primary" aria-label="add" className={classes.fab}
+                onClick={openAddDialog}>
+                <AddIcon/>
+            </Fab>
+            <Dialog open={addOpen} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
+                <DialogTitle>{i18n.t('add solution')}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {i18n.t('how to write a solution')}
+                    </DialogContentText>
+                    <TextField
+                        inputRef={inputEl}
+                        autoFocus
+                        placeholder={i18n.t('solution placeholder')}
+                        required
+                        multiline
+                        rowsMax={8}
+                        id="solution"
+                        inputProps={{
+                            maxLength:255
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeAddDialog} color="primary">
+                        {i18n.t('Cancel')}
+                    </Button>
+                    <Button onClick={submit} color="primary">
+                        {i18n.t('Submit')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment>
     )
 }
 
-export default connect(mapStateToProps)(Solutions)
+export default connect(mapStateToProps, mapDispatchToProps)(Solutions)
