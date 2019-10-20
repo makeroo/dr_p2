@@ -1,13 +1,15 @@
-import { NextSolutionPageAction, PrevSolutionPageAction, NEXT_SOLUTION_PAGE, PREV_SOLUTION_PAGE } from "./types";
+import { SolutionsSelectPageAction, SolutionsAddDialogAction, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG } from "./types";
 
-export function nextSolutionPage () : NextSolutionPageAction {
+export function solutionsSelectPage (page: number) : SolutionsSelectPageAction {
     return {
-        type: NEXT_SOLUTION_PAGE
+        type: SOLUTIONS_SELECT_PAGE,
+        page
     }
 }
 
-export function prevSolutionPage () : PrevSolutionPageAction {
+export function addDialog (open: boolean) : SolutionsAddDialogAction {
     return {
-        type: PREV_SOLUTION_PAGE
+        type: SOLUTIONS_ADD_DIALOG,
+        open
     }
 }

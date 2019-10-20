@@ -1,16 +1,19 @@
-export const PREV_SOLUTION_PAGE = 'PREV_SOLUTION_PAGE'
-export const NEXT_SOLUTION_PAGE = 'NEXT_SOLUTION_PAGE'
+export const SOLUTIONS_SELECT_PAGE = 'SOLUTIONS_SELECT_PAGE'
+export const SOLUTIONS_ADD_DIALOG = 'SOLUTIONS_ADD_DIALOG'
 
-export interface PrevSolutionPageAction {
-    type: typeof PREV_SOLUTION_PAGE
+export interface SolutionsSelectPageAction {
+    type: typeof SOLUTIONS_SELECT_PAGE
+    page: number
 }
 
-export interface NextSolutionPageAction {
-    type: typeof NEXT_SOLUTION_PAGE
+export interface SolutionsAddDialogAction {
+    type: typeof SOLUTIONS_ADD_DIALOG
+    open: boolean
 }
 
-export type ExplorerActionTypes = PrevSolutionPageAction | NextSolutionPageAction
+export type ExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialogAction
 
 export interface ExplorerState {
     page: number
+    addDialog: boolean
 }

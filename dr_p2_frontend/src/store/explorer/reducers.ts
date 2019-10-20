@@ -1,7 +1,8 @@
-import { ExplorerState, ExplorerActionTypes, PREV_SOLUTION_PAGE, NEXT_SOLUTION_PAGE } from "./types";
+import { ExplorerState, ExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG } from "./types";
 
 const initialState : ExplorerState = {
-    page: 0
+    page: 0,
+    addDialog: false
 }
 
 export function explorerReducer (
@@ -9,16 +10,16 @@ export function explorerReducer (
     action: ExplorerActionTypes
 ): ExplorerState {
     switch (action.type) {
-        case PREV_SOLUTION_PAGE:
+        case SOLUTIONS_SELECT_PAGE:
             return {
-                page: state.page - 1,
-                ...state
+                ...state,
+                page: action.page
             }
 
-        case NEXT_SOLUTION_PAGE:
+        case SOLUTIONS_ADD_DIALOG:
             return {
-                page: state.page + 1,
-                ...state
+                ...state,
+                addDialog: action.open
             }
 
         default:
