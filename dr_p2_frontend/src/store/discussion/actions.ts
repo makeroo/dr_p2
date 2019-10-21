@@ -75,7 +75,38 @@ export const getDiscussion = (id: number): ThunkAction<Promise<Discussion>, Load
                 const discussion = {
                     id: id,
                     question: 'ci stiamo dentro?',
-                    theses: [],
+                    theses: [
+                        {
+                            id: 1001,
+                            solution: true,
+                            content: '1',
+                        },
+                        {
+                            id: 1002,
+                            solution: true,
+                            content: '2',
+                        },
+                        {
+                            id: 1003,
+                            solution: true,
+                            content: '3',
+                        },
+                        {
+                            id: 1004,
+                            solution: true,
+                            content: '4',
+                        },
+                        {
+                            id: 1005,
+                            solution: true,
+                            content: '5',
+                        },
+                        {
+                            id: 1006,
+                            solution: true,
+                            content: '6',
+                        },
+                    ],
                     relations: []
                 }
 
