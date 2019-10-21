@@ -1,4 +1,4 @@
-import { DiscussionState, DiscussionActionTypes, Thesis,
+import { DiscussionState, DiscussionActionTypes,
     CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY
 } from './types'
 import { indexDiscussion } from './utils'

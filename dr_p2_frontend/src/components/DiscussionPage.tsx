@@ -23,7 +23,7 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionR
     return {
         query_id: +props.match!.params.id,
         loading: state.discussion.loading,
-        discussion: state.discussion.discussion
+        discussion: state.discussion.discussion,
     }
 }
 
