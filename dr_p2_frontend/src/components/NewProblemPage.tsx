@@ -32,6 +32,8 @@ const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
     const inputEl = useRef<HTMLInputElement>(null);
 
     const handleCreateProblem = () => {
+        // TODO: validate form, question is required
+
         if (inputEl && inputEl.current) {
             newProblem(inputEl.current.value).then((v) => {
                 //console.log('newproblem result:', v)
