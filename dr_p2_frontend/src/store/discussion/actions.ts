@@ -106,6 +106,11 @@ export const getDiscussion = (id: number): ThunkAction<Promise<Discussion>, Load
                             solution: true,
                             content: '6',
                         },
+                        {
+                            id: 1007,
+                            solution: false,
+                            content: '7',
+                        },
                     ],
                     relations: []
                 }
