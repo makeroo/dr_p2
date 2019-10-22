@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField'
 import AddIcon from '@material-ui/icons/Add'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
@@ -35,6 +36,7 @@ const mapStateToProps = (state: AppState) => ({
     indexedDiscussion: state.discussion.indexedDiscussion!,
     page: state.explorer.page,
     addDialogType: state.explorer.addDialogType,
+    working: state.discussion.loading,
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
@@ -91,7 +93,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Solutions : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles();
 
-    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage } = props
+    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working } = props
     var { page } = props
     const { solutions, theses, invertedSupports } = indexedDiscussion
 
@@ -208,10 +210,14 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
             <Grid container>
                 { columns }
             </Grid>
+            { working ?
+            <CircularProgress className={classes.fab}/>
+            :
             <Fab color="primary" aria-label="add" className={classes.fab}
                 onClick={openAddSolutionDialog}>
                 <AddIcon/>
             </Fab>
+            }
             <Dialog open={addDialogType !== AddDialogType.None} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
                 <DialogTitle>
                     {i18n.t(addDialogType === AddDialogType.Solution ? 'add solution' : 'add thesis')}
