@@ -53,7 +53,8 @@ export const getSessionUser = (auth: AuthState) : ThunkAction<Promise<AuthAction
             //console.log('sessionUser request in progress')
 
             setTimeout(() => {
-                dispatch(notLoggedIn())
+                //dispatch(notLoggedIn())
+                dispatch(declareName('pippo'))
             })
         })
 
