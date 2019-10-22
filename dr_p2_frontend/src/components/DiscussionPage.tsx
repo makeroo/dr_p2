@@ -47,10 +47,12 @@ const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
             return
         }
 
-        getDiscussion(query_id)
-    }, [])
+        //console.log('loading discussion', query_id)
 
-    return (loading || !discussion ?
+        getDiscussion(query_id)
+    }, [loading, discussion, getDiscussion, query_id])
+
+    return (!discussion ?
         <Container>
             <Typography>{i18n.t('loading discussion')}</Typography>
             <CircularProgress/>
