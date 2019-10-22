@@ -9,7 +9,7 @@ import { AppState } from '../store/index'
 import WelcomePage from './WelcomePage'
 import Loading from './Loading'
 import { getSessionUser } from '../store/auth/actions'
-import { QueryState, AuthState } from '../store/auth/types'
+import { QueryState } from '../store/auth/types'
 
 // this is what PrivateRoute fc receives
 type PrivateRouteProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
@@ -26,8 +26,8 @@ const mapStateToProps = (state: AppState, props: PrivateRouteTagProps) => ({
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    getSessionUser: async (auth: AuthState) => {
-        dispatch(getSessionUser(auth))
+    getSessionUser: async () => {
+        dispatch(getSessionUser())
     }
 })
 
@@ -40,13 +40,14 @@ const PrivateRoute : React.FC<PrivateRouteProps> = (props) => {
         // note: getSessionUser gets called once per PrivateRoute instance
         // I could move this block where Router is configured, that is in App component,
         // but I prefer here because App would get cluttered
-        getSessionUser(auth)
-    }, [])
+        getSessionUser()
+    }, [getSessionUser]) // note: getSessionUser is a closure so it is a new object everytime I'm invoked
+                         // same as passing no array at all
 
     const InnerComponent = component
 
     return <Route {...rest} render={(props) => {
-        if (auth.state === QueryState.setup) {
+        if (auth.state === QueryState.checkingSession) {
             return <Loading/>
         }
 

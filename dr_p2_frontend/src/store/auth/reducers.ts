@@ -4,12 +4,12 @@ import { QueryState, AuthState, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, Au
 const initialState : AuthState = {
     // workflow: querytbd -> queryrunning -> loggedin / notloggedin
     // feedback:        loading              req page / welcome page
-    // state:    l.ing:T/pr:U l.ing:T/pr:D    l.ing:F un:U  / l.ing:F un:D
+    // state:    s:CS/pr:U S:CS/pr:D       s:D un:U  / S:D un:D
 
-    state: QueryState.setup,
+    state: QueryState.checkingSession,
     loggedIn: false,
     //userName: undefined
-    //sessionUser: undefined
+    //pendingRequest: undefined
 };
 
 export function authReducer (
@@ -28,7 +28,7 @@ export function authReducer (
             return {
                 state: action.state,
                 loggedIn: false,
-                sessionUser: action.promise
+                pendingRequest: action.promise
             }
 
         case NOT_LOGGED_IN:

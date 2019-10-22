@@ -20,7 +20,7 @@ export interface NotLoggedInAction {
 export type AuthActionTypes = DeclareNameAction | PendingRequestAction | NotLoggedInAction
 
 export enum QueryState {
-    setup,
+    checkingSession,
     signingIn,
     done
 }
@@ -29,5 +29,5 @@ export interface AuthState {
     state: QueryState
     loggedIn: boolean
     userName?: string
-    sessionUser?: Promise<AuthActionTypes>
+    pendingRequest?: Promise<AuthActionTypes>
 }

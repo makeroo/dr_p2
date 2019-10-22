@@ -1,7 +1,8 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
-import { QueryState, DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes, AuthState } from './types'
+import { QueryState, DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes } from './types'
+import { AppState } from '..'
 
 export function declareName(name: string): DeclareNameAction {
     return {
@@ -43,22 +44,29 @@ export const login = (username: string): ThunkAction<Promise<AuthActionTypes>, D
     }
 }
 
-export const getSessionUser = (auth: AuthState) : ThunkAction<Promise<AuthActionTypes>, PendingRequestAction, string, PendingRequestAction> => {
-    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<AuthActionTypes> => {
-        if (auth.sessionUser !== undefined) {
-            return auth.sessionUser
+export const getSessionUser = () : ThunkAction<Promise<AuthActionTypes>, AppState, string, PendingRequestAction> => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>, getState: () => AppState): Promise<AuthActionTypes> => {
+        const state = getState()
+        const auth = state.auth
+
+        //console.log('getsess start', auth, new Date())
+
+        if (auth.pendingRequest !== undefined) {
+            return auth.pendingRequest
         }
 
         let p = new Promise<AuthActionTypes>((resolve) => {
-            //console.log('sessionUser request in progress')
+            //console.log('pendingRequest request in progress')
 
             setTimeout(() => {
-                //dispatch(notLoggedIn())
-                dispatch(declareName('pippo'))
-            })
+                //console.log('pendingRequest done')
+                dispatch(notLoggedIn())
+                //dispatch(declareName('pippo'))
+            }, 500)
         })
 
-        dispatch(pendingRequest(p, QueryState.setup))
+        //console.log('pendingRequest defined')
+        dispatch(pendingRequest(p, QueryState.checkingSession))
 
         return p
     }
