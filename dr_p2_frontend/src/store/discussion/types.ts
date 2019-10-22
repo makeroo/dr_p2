@@ -72,10 +72,16 @@ export interface DiscussionState {
     indexedDiscussion?: IndexedDiscussion
 }
 
+/**
+ * Map from thesis id (actually a number) to thesis object.
+ */
 interface ThesesIndex {
     [id: string]: Thesis
 }
 
+/**
+ * Map from thesis id (actually a number) to list of thesis id (theoretically a set)
+ */
 export interface RelationIndex {
     [from: string]: number[]
 }
@@ -87,4 +93,10 @@ export interface IndexedDiscussion {
     supports: RelationIndex
     invertedSupports: RelationIndex
     contradictions: RelationIndex
+
+    /**
+     * Theses that do not support other theses.
+     * These theses are listed in a "special" column.
+     */
+    unbindedTheses: ThesesIndex
 }

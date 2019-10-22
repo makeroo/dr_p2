@@ -95,7 +95,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
 
     const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working } = props
     var { page } = props
-    const { solutions, theses, invertedSupports } = indexedDiscussion
+    const { solutions, theses, invertedSupports, unbindedTheses } = indexedDiscussion
 
     const theme = useTheme<Theme>()
     let visibleSolutions : number
@@ -128,13 +128,14 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         pageStep = 2
     }
 
-    let pages = solutions.length // Math.ceil(solutions.length / visibleSolutions)
+    const pageShift = unbindedTheses ? 1 : 0
+    const pages = solutions.length + pageShift
 
     if (pages < visibleSolutions) {
         page = 0;
     } else if (page < 0) {
         page = 0;
-    } else if (page >= pages - visibleSolutions) {
+    } else if (page > pages - visibleSolutions) {
         page = pages - visibleSolutions;
     }
 
@@ -145,17 +146,41 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     }
 
     const nextPage = () => {
-        if (page < solutions.length - visibleSolutions) {
-            gotoPage(Math.min(page + pageStep, solutions.length - visibleSolutions))
+        if (page < pages - visibleSolutions) {
+            gotoPage(Math.min(page + pageStep, pages - visibleSolutions))
         }
     }
 
-    const fromSol = page;
-    const toSol = Math.min(fromSol + visibleSolutions, solutions.length)
+    const fromSol = Math.max(0, page - pageShift);
+    const toSol = Math.min(fromSol + visibleSolutions - (page == 0 ? pageShift : 0), solutions.length)
 
     let columns : JSX.Element[] = []
 
+    if (unbindedTheses && page == 0) {
+        const thesesElements : JSX.Element[] = []
+
+        for (let thesis of Object.values(unbindedTheses)) {
+            thesesElements.push(
+                <Grid item xs={12}>
+                    <Paper>{thesis.content}</Paper>
+                </Grid>
+            )
+        }
+
+        columns.push(
+            <Grid item container xs={12} md={4} lg={2} key={'unbinded'}>
+                <Grid item xs={12}>
+                    {/* empty */}
+                </Grid>
+                <Grid item xs={12} container>
+                    { thesesElements }
+                </Grid>
+            </Grid>
+        )
+    }
+
     for (let i = fromSol; i < toSol; ++i) {
+        console.log(fromSol, toSol,i)
         const solution = solutions[i];
 
         const thesesElements : JSX.Element[] = []
@@ -181,18 +206,6 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                 <Grid item xs={12} container>
                     { thesesElements }
                 </Grid>
-                { solutions.length > visibleSolutions &&
-                    <React.Fragment>
-                        <Button aria-label="previous" className={classes.prevPage}
-                            onClick={prevPage}>
-                            <ChevronLeft/>
-                        </Button>
-                        <Button color="default" aria-label="next" className={classes.nextPage}
-                            onClick={nextPage}>
-                            <ChevronRight/>
-                        </Button>
-                    </React.Fragment>
-                }
             </Grid>
         )
     }
@@ -209,6 +222,18 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         <React.Fragment>
             <Grid container>
                 { columns }
+                { pages > visibleSolutions &&
+                    <React.Fragment>
+                        <Button aria-label="previous" className={classes.prevPage}
+                            onClick={prevPage}>
+                            <ChevronLeft/>
+                        </Button>
+                        <Button color="default" aria-label="next" className={classes.nextPage}
+                            onClick={nextPage}>
+                            <ChevronRight/>
+                        </Button>
+                    </React.Fragment>
+                }
             </Grid>
             { working ?
             <CircularProgress className={classes.fab}/>

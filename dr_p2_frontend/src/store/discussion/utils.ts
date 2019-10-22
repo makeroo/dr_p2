@@ -17,6 +17,7 @@ export function indexDiscussion (discussion: Discussion): IndexedDiscussion {
         supports: {},
         invertedSupports: {},
         contradictions: {},
+        unbindedTheses: {}
     }
 
     for (let thesis of discussion.theses) {
@@ -24,6 +25,8 @@ export function indexDiscussion (discussion: Discussion): IndexedDiscussion {
 
         if (thesis.solution) {
             r.solutions.push(thesis)
+        } else {
+            r.unbindedTheses[thesis.id] = thesis
         }
     }
 
@@ -34,6 +37,8 @@ export function indexDiscussion (discussion: Discussion): IndexedDiscussion {
             case RelationType.support:
                 relIndex = r.supports
                 invIndex = r.invertedSupports
+
+                delete r.unbindedTheses[relation.thesis1]
                 break
 
             case RelationType.contradiction:
