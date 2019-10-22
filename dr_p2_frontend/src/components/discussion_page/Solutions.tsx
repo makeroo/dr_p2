@@ -27,21 +27,25 @@ import i18n from 'i18next'
 import { AppState } from '../../store/index'
 import { addDialog, solutionsSelectPage } from '../../store/explorer/actions'
 import { postThesis } from '../../store/discussion/actions';
+import { AddDialogType } from '../../store/explorer/types';
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
     //discussion: state.discussion.discussion!,
     indexedDiscussion: state.discussion.indexedDiscussion!,
     page: state.explorer.page,
-    addOpen: state.explorer.addDialog,
+    addDialogType: state.explorer.addDialogType,
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    openAddDialog: () => {
-        return dispatch(addDialog(true))
+    openAddSolutionDialog: () => {
+        return dispatch(addDialog(AddDialogType.Solution))
+    },
+    openAddThesisDialog: () => {
+        return dispatch(addDialog(AddDialogType.Thesis))
     },
     closeAddDialog: () => {
-        return dispatch(addDialog(false))
+        return dispatch(addDialog(AddDialogType.None))
     },
     postThesis: (is_solution: boolean, content: string) => {
         return dispatch(postThesis(is_solution, content))
@@ -87,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Solutions : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles();
 
-    const { indexedDiscussion, openAddDialog, closeAddDialog, addOpen, postThesis, gotoPage } = props
+    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage } = props
     var { page } = props
     const { solutions, theses, invertedSupports } = indexedDiscussion
 
@@ -96,14 +100,14 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
 
     const inputEl = useRef<HTMLInputElement>(null)
 
-    const submit = () => {
+    const submitThesis = () => {
         closeAddDialog()
 
         if (inputEl && inputEl.current) {
             const thesis = inputEl.current.value
 
-            postThesis(true, thesis)
-            console.log('new solution', thesis)
+            postThesis(addDialogType === AddDialogType.Solution, thesis)
+            //console.log('new solution', thesis)
         }
     }
 
@@ -205,19 +209,22 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                 { columns }
             </Grid>
             <Fab color="primary" aria-label="add" className={classes.fab}
-                onClick={openAddDialog}>
+                onClick={openAddSolutionDialog}>
                 <AddIcon/>
             </Fab>
-            <Dialog open={addOpen} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
-                <DialogTitle>{i18n.t('add solution')}</DialogTitle>
+            <Dialog open={addDialogType !== AddDialogType.None} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
+                <DialogTitle>
+                    {i18n.t(addDialogType === AddDialogType.Solution ? 'add solution' : 'add thesis')}
+                    <Button onClick={addDialogType === AddDialogType.Solution ? openAddThesisDialog : openAddSolutionDialog}>{i18n.t(addDialogType === AddDialogType.Solution ? 'A thesis' : 'A solution')}</Button>
+                </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {i18n.t('how to write a solution')}
+                        {i18n.t(addDialogType === AddDialogType.Solution ? 'how to write a solution' : 'how to write a thesis')}
                     </DialogContentText>
                     <TextField
                         inputRef={inputEl}
                         autoFocus
-                        placeholder={i18n.t('solution placeholder')}
+                        placeholder={i18n.t(addDialogType === AddDialogType.Solution ? 'solution placeholder' : 'thesis placeholder')}
                         required
                         multiline
                         rowsMax={8}
@@ -231,7 +238,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                     <Button onClick={closeAddDialog} color="primary">
                         {i18n.t('Cancel')}
                     </Button>
-                    <Button onClick={submit} color="primary">
+                    <Button onClick={submitThesis} color="primary">
                         {i18n.t('Submit')}
                     </Button>
                 </DialogActions>

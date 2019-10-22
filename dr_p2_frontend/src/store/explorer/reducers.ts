@@ -1,8 +1,8 @@
-import { ExplorerState, ExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG } from "./types";
+import { ExplorerState, ExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG, AddDialogType } from "./types";
 
 const initialState : ExplorerState = {
     page: 0,
-    addDialog: false
+    addDialogType: AddDialogType.None
 }
 
 export function explorerReducer (
@@ -19,7 +19,7 @@ export function explorerReducer (
         case SOLUTIONS_ADD_DIALOG:
             return {
                 ...state,
-                addDialog: action.open
+                addDialogType: action.addDialogType
             }
 
         default:
