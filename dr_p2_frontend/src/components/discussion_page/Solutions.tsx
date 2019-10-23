@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import Grid from '@material-ui/core/Grid'
-import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import AddIcon from '@material-ui/icons/Add'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
@@ -27,8 +26,10 @@ import i18n from 'i18next'
 
 import { AppState } from '../../store/index'
 import { addDialog, solutionsSelectPage } from '../../store/explorer/actions'
-import { postThesis } from '../../store/discussion/actions';
-import { AddDialogType } from '../../store/explorer/types';
+import { postThesis } from '../../store/discussion/actions'
+import { AddDialogType } from '../../store/explorer/types'
+import SolutionBox from './SolutionBox'
+import ThesisBox from './ThesisBox'
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
@@ -83,9 +84,6 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'absolute',
             right: theme.spacing(0.5),
             minWidth: '36px',
-        },
-        solution: {
-            minHeight: '4em',
         },
     }),
 )
@@ -152,17 +150,17 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     }
 
     const fromSol = Math.max(0, page - pageShift);
-    const toSol = Math.min(fromSol + visibleSolutions - (page == 0 ? pageShift : 0), solutions.length)
+    const toSol = Math.min(fromSol + visibleSolutions - (page === 0 ? pageShift : 0), solutions.length)
 
     let columns : JSX.Element[] = []
 
-    if (unbindedTheses && page == 0) {
+    if (unbindedTheses && page === 0) {
         const thesesElements : JSX.Element[] = []
 
         for (let thesis of Object.values(unbindedTheses)) {
             thesesElements.push(
                 <Grid item xs={12}>
-                    <Paper>{thesis.content}</Paper>
+                    <ThesisBox thesis={thesis}/>
                 </Grid>
             )
         }
@@ -192,7 +190,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     
                 thesesElements.push(
                     <Grid item xs={12}>
-                        <Paper>{thesis.content}</Paper>
+                        <ThesisBox thesis={thesis}/>
                     </Grid>
                 )
             }
@@ -201,7 +199,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         columns.push(
             <Grid item container xs={12} md={4} lg={2} key={solution.id}>
                 <Grid item xs={12}>
-                    <Paper className={classes.solution}>{solution.content}</Paper>
+                    <SolutionBox thesis={solution}/>
                 </Grid>
                 <Grid item xs={12} container>
                     { thesesElements }
