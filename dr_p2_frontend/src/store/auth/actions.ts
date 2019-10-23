@@ -60,8 +60,8 @@ export const getSessionUser = () : ThunkAction<Promise<AuthActionTypes>, AppStat
 
             setTimeout(() => {
                 //console.log('pendingRequest done')
-                dispatch(notLoggedIn())
-                //dispatch(declareName('pippo'))
+                //dispatch(notLoggedIn())
+                dispatch(declareName('pippo'))
             }, 500)
         })
 
