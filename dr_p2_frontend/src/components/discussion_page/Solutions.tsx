@@ -152,7 +152,8 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     const fromSol = Math.max(0, page - pageShift);
     const toSol = Math.min(fromSol + visibleSolutions - (page === 0 ? pageShift : 0), solutions.length)
 
-    let columns : JSX.Element[] = []
+    let solutionColumns : JSX.Element[] = []
+    let thesesColumns : JSX.Element[] = []
 
     if (unbindedTheses && page === 0) {
         const thesesElements : JSX.Element[] = []
@@ -165,14 +166,14 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
             )
         }
 
-        columns.push(
+        solutionColumns.push(
+            <Grid item xs={12} md={4} lg={2} key={'unbinded'}>
+                <Typography>{i18n.t('unbinded theses')}</Typography>
+            </Grid>
+        )
+        thesesColumns.push(
             <Grid item container xs={12} md={4} lg={2} key={'unbinded'}>
-                <Grid item xs={12}>
-                    {/* empty */}
-                </Grid>
-                <Grid item xs={12} container>
-                    { thesesElements }
-                </Grid>
+                { thesesElements }
             </Grid>
         )
     }
@@ -196,20 +197,20 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
             }
         }
 
-        columns.push(
+        solutionColumns.push(
+            <Grid item xs={12} md={4} lg={2} key={solution.id}>
+                <SolutionBox thesis={solution}/>
+            </Grid>
+        )
+        thesesColumns.push(
             <Grid item container xs={12} md={4} lg={2} key={solution.id}>
-                <Grid item xs={12}>
-                    <SolutionBox thesis={solution}/>
-                </Grid>
-                <Grid item xs={12} container>
-                    { thesesElements }
-                </Grid>
+                { thesesElements }
             </Grid>
         )
     }
 
-    if (columns.length === 0) {
-        columns.push(
+    if (solutionColumns.length === 0) {
+        solutionColumns.push(
             <Grid item xs={12} key={0}>
                 <Typography>{i18n.t('no solutions yet')}</Typography>
             </Grid>
@@ -219,7 +220,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     return (
         <React.Fragment>
             <Grid container>
-                { columns }
+                { solutionColumns }
                 { pages > visibleSolutions &&
                     <React.Fragment>
                         <Button aria-label="previous" className={classes.prevPage}
@@ -232,6 +233,9 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                         </Button>
                     </React.Fragment>
                 }
+            </Grid>
+            <Grid container>
+                { thesesColumns }
             </Grid>
             { working ?
             <CircularProgress className={classes.fab}/>
