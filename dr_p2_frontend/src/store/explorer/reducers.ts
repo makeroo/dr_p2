@@ -1,8 +1,9 @@
-import { ExplorerState, ExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG, AddDialogType } from "./types";
+import { ExplorerState, ExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG, AddDialogType, PIN_THESIS } from "./types";
 
 const initialState : ExplorerState = {
     page: 0,
-    addDialogType: AddDialogType.None
+    addDialogType: AddDialogType.None,
+    pinnedThesis: null,
 }
 
 export function explorerReducer (
@@ -22,6 +23,11 @@ export function explorerReducer (
                 addDialogType: action.addDialogType
             }
 
+        case PIN_THESIS:
+            return {
+                ...state,
+                pinnedThesis: action.thesis
+            }
         default:
             return state
     }

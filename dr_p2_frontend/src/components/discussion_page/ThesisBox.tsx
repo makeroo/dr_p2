@@ -13,12 +13,17 @@ import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined'
 import { AppState } from '../../store/index'
 import { Thesis } from '../../store/discussion/types';
 import { Theme, makeStyles, createStyles, IconButton, Typography } from '@material-ui/core'
+import { pinThesis } from '../../store/explorer/actions'
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
-    thesis: props.thesis
+    thesis: props.thesis,
+    selected: state.explorer.pinnedThesis === props.thesis.id,
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+    pinMe: (thesisId: number | null) => {
+        dispatch(pinThesis(thesisId))
+    },
 })
 
 type SolutionsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
@@ -60,11 +65,17 @@ const useStyles = makeStyles((theme: Theme) =>
 const ThesisBox : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles()
 
-    const { thesis } = props
+    const { thesis, selected, pinMe } = props
+
+    const shareClass = selected ? `${classes.share} selected` : classes.share
+
+    const togglePin = () => {
+        pinMe(selected ? null : thesis.id)
+    }
 
     return (
         <Paper className={classes.thesis}>
-            <IconButton className={classes.share}>
+            <IconButton className={shareClass} onClick={togglePin}>
                 <ShareIcon/>
             </IconButton>
             <IconButton className={classes.up}>
