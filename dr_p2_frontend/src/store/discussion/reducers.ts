@@ -60,15 +60,21 @@ export function discussionReducer (
 
                 theses_index[action.thesis.id] = action.thesis
 
-                let solutions;
+                let solutions, unbindedTheses;
 
                 if (action.thesis.solution) {
                     solutions = [
                         ...indexedDiscussion.solutions,
                         action.thesis
                     ]
+                    unbindedTheses = indexedDiscussion.unbindedTheses
                 } else {
                     solutions = indexedDiscussion.solutions
+                    unbindedTheses = {
+                        ...indexedDiscussion.unbindedTheses,
+                    }
+
+                    unbindedTheses[action.thesis.id] = action.thesis
                 }
 
                 return {
@@ -83,7 +89,8 @@ export function discussionReducer (
                     indexedDiscussion: {
                         ...indexedDiscussion,
                         theses: theses_index,
-                        solutions
+                        solutions,
+                        unbindedTheses,
                     }
                 }
             } else {
