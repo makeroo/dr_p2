@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
         thesis: {
             minHeight: '4em',
             position: 'relative',
+            margin: theme.spacing(.25),
         },
         share: {
             padding: '0 0 0 4px',

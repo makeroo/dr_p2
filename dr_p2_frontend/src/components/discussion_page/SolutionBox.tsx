@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         solution: {
             minHeight: '4em',
+            margin: theme.spacing(.25),
         },
     }),
 )
