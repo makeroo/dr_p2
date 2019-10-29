@@ -1,3 +1,5 @@
+import { Thesis } from "../discussion/types"
+
 export const SOLUTIONS_SELECT_PAGE = 'SOLUTIONS_SELECT_PAGE'
 export const SOLUTIONS_ADD_DIALOG = 'SOLUTIONS_ADD_DIALOG'
 export const PIN_THESIS = 'PIN_THESIS'
@@ -20,7 +22,7 @@ export interface SolutionsAddDialogAction {
 
 export interface PinThesis {
     type: typeof PIN_THESIS
-    thesis: number | null
+    thesis: Thesis | null
 }
 
 export type ExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialogAction | PinThesis
@@ -28,5 +30,5 @@ export type ExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialog
 export interface ExplorerState {
     page: number
     addDialogType: AddDialogType
-    pinnedThesis: number | null
+    pinnedThesis: Thesis | null
 }

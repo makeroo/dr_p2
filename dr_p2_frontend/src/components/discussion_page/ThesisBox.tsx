@@ -17,12 +17,12 @@ import { pinThesis } from '../../store/explorer/actions'
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
     thesis: props.thesis,
-    selected: state.explorer.pinnedThesis === props.thesis.id,
+    selected: state.explorer.pinnedThesis === props.thesis,
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    pinMe: (thesisId: number | null) => {
-        dispatch(pinThesis(thesisId))
+    pinMe: (thesis: Thesis | null) => {
+        dispatch(pinThesis(thesis))
     },
 })
 
@@ -70,7 +70,8 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
     const shareClass = selected ? `${classes.share} selected` : classes.share
 
     const togglePin = () => {
-        pinMe(selected ? null : thesis.id)
+        // TODO: if there is a selected thesis and it's not me then propose relation
+        pinMe(selected ? null : thesis)
     }
 
     return (
