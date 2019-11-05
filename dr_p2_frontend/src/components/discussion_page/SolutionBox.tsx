@@ -3,13 +3,14 @@ import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper'
 
 import { AppState } from '../../store/index'
 import { Thesis } from '../../store/discussion/types';
+import { Card, CardActionArea, Typography } from '@material-ui/core';
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
-    thesis: props.thesis
+    thesis: props.thesis,
+    pinnedThesis: state.explorer.pinnedThesis,
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
@@ -20,8 +21,10 @@ type SolutionsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof map
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         solution: {
-            minHeight: '4em',
             margin: theme.spacing(.25),
+        },
+        content: {
+            minHeight: '4em',
         },
     }),
 )
@@ -29,9 +32,23 @@ const useStyles = makeStyles((theme: Theme) =>
 const SolutionBox : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles()
 
-    const { thesis } = props
+    const { thesis, pinnedThesis } = props
 
-    return <Paper className={classes.solution}>{thesis.content}</Paper>
+    const handleClick = () => {
+        if (pinnedThesis) {
+            
+        }
+    }
+
+    return (
+        <Card className={classes.solution}>
+            <CardActionArea className={classes.content} onClick={handleClick}>
+                <Typography paragraph>{thesis.content}</Typography>
+            </CardActionArea>
+        </Card>
+    )
+    
+    //<Paper>{thesis.content}</Paper>
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SolutionBox)
