@@ -11,10 +11,34 @@ export function solutionsSelectPage (page: number) : SolutionsSelectPageAction {
     }
 }
 
-export function addDialog (addDialogType: AddDialogType) : SolutionsAddDialogAction {
+export function closeAddDialog () : SolutionsAddDialogAction {
     return {
         type: SOLUTIONS_ADD_DIALOG,
-        addDialogType
+        addDialogType: AddDialogType.None,
+        solution: null
+    }
+}
+export function addSolutionDialog () : SolutionsAddDialogAction {
+    return {
+        type: SOLUTIONS_ADD_DIALOG,
+        addDialogType: AddDialogType.Solution,
+        solution: null
+    }
+}
+
+export function addThesisDialog () : SolutionsAddDialogAction {
+    return {
+        type: SOLUTIONS_ADD_DIALOG,
+        addDialogType: AddDialogType.Thesis,
+        solution: null
+    }
+}
+
+export function supportToSolutionDialog (solution: Thesis) : SolutionsAddDialogAction {
+    return {
+        type: SOLUTIONS_ADD_DIALOG,
+        addDialogType: AddDialogType.SupportToSolution,
+        solution
     }
 }
 

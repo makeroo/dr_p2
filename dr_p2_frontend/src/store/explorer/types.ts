@@ -7,7 +7,9 @@ export const PIN_THESIS = 'PIN_THESIS'
 export enum AddDialogType {
     None,
     Solution,
-    Thesis
+    Thesis,
+    SupportToSolution,
+    Relation, // TODO
 }
 
 export interface SolutionsSelectPageAction {
@@ -18,6 +20,7 @@ export interface SolutionsSelectPageAction {
 export interface SolutionsAddDialogAction {
     type: typeof SOLUTIONS_ADD_DIALOG
     addDialogType: AddDialogType
+    solution: Thesis | null
 }
 
 export interface PinThesis {
@@ -31,4 +34,5 @@ export interface ExplorerState {
     page: number
     addDialogType: AddDialogType
     pinnedThesis: Thesis | null
+    selectedSolution: Thesis | null
 }
