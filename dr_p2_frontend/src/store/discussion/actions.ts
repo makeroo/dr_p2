@@ -7,7 +7,7 @@ import {
     CreatingProblemAction, CREATING_PROBLEM,
     LoadDiscussionAction, LOAD_DISCUSSION,
     AddThesisAction, ADD_THESIS,
-    WorkingOnDiscussionAction, WORKING_ON_DISCUSSION, DiscussionReadyAction, DISCUSSION_READY,
+    WorkingOnDiscussionAction, WORKING_ON_DISCUSSION, DiscussionReadyAction, DISCUSSION_READY, RelationType, Relation, AddRelationAction, ADD_RELATION,
 } from './types'
 
 export function createProblem(id: number, question: string): CreateProblemAction {
@@ -47,6 +47,13 @@ export function addThesis(thesis: Thesis): AddThesisAction {
     return {
         type: ADD_THESIS,
         thesis
+    }
+}
+
+export function addRelation(relation: Relation): AddRelationAction {
+    return {
+        type: ADD_RELATION,
+        relation
     }
 }
 
@@ -109,7 +116,7 @@ export const getDiscussion = (id: number): ThunkAction<Promise<Discussion>, Load
                         {
                             id: 1007,
                             solution: false,
-                            content: '7',
+                            content: 'a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a ',
                         },
                     ],
                     relations: []
@@ -123,7 +130,7 @@ export const getDiscussion = (id: number): ThunkAction<Promise<Discussion>, Load
     }
 }
 
-let fake_thesis_ids = 10
+let fake_ids = 10
 export const postThesis = (is_solution: boolean, content: string): ThunkAction<Promise<Thesis>, AddThesisAction, Thesis, AddThesisAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Thesis> => {
         dispatch(workingOnDiscussion())
@@ -131,7 +138,7 @@ export const postThesis = (is_solution: boolean, content: string): ThunkAction<P
         return new Promise<Thesis>((resolve) => {
             setTimeout(() => {
                 const thesis = {
-                    id: fake_thesis_ids++,
+                    id: fake_ids++,
                     solution: is_solution,
                     content
                 }
@@ -141,6 +148,29 @@ export const postThesis = (is_solution: boolean, content: string): ThunkAction<P
                 dispatch(discussionReady())
 
                 resolve(thesis)
+            }, 1000)
+        })
+    }
+}
+
+export const postRelation = (thesis1: Thesis, thesis2: Thesis, relationType: RelationType): ThunkAction<Promise<Relation>, AddRelationAction, Relation, AddRelationAction> => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Relation> => {
+        dispatch(workingOnDiscussion())
+
+        return new Promise<Relation>((resolve) => {
+            setTimeout(() => {
+                const relation = {
+                    id: fake_ids++,
+                    thesis1: thesis1.id,
+                    thesis2: thesis2.id,
+                    type: relationType
+                }
+
+                dispatch(addRelation(relation))
+
+                dispatch(discussionReady())
+
+                resolve(relation)
             }, 1000)
         })
     }

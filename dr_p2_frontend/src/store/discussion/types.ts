@@ -2,6 +2,7 @@ export const CREATE_PROBLEM = 'CREATE_PROBLEM'
 export const CREATING_PROBLEM = 'CREATING_PROBLEM'
 export const LOAD_DISCUSSION = 'LOAD_DISCUSSION'
 export const ADD_THESIS = 'ADD_THESIS'
+export const ADD_RELATION = 'ADD_RELATION'
 export const WORKING_ON_DISCUSSION = 'WORKING_ON_DISCUSSION'
 export const DISCUSSION_READY = 'DISCUSSION_READY'
 
@@ -33,7 +34,12 @@ export interface AddThesisAction {
     thesis: Thesis
 }
 
-export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction | WorkingOnDiscussionAction | DiscussionReadyAction | AddThesisAction
+export interface AddRelationAction {
+    type: typeof ADD_RELATION
+    relation: Relation
+}
+
+export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction | WorkingOnDiscussionAction | DiscussionReadyAction | AddThesisAction | AddRelationAction
 
 export interface Thesis {
     id: number

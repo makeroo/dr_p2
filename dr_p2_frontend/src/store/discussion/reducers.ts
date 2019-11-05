@@ -1,7 +1,7 @@
 import { DiscussionState, DiscussionActionTypes,
-    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY
+    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY, ADD_RELATION,
 } from './types'
-import { indexDiscussion } from './utils'
+import { indexDiscussion, addRelation } from './utils'
 
 const initialState : DiscussionState = {
     loading: false
@@ -49,7 +49,7 @@ export function discussionReducer (
                     loading: false
                 }
 
-        case ADD_THESIS:
+        case ADD_THESIS: {
             const discussion = state.discussion
             const indexedDiscussion = state.indexedDiscussion
 
@@ -97,6 +97,36 @@ export function discussionReducer (
                 // cannot happen
                 return state
             }
+        }
+        case ADD_RELATION: {
+            const discussion = state.discussion
+            const indexedDiscussion = state.indexedDiscussion
+
+            if (discussion && indexedDiscussion) {
+                let [updated, r] = addRelation(indexedDiscussion, action.relation)
+
+                if (r) {
+                    let relations = [...discussion.relations]
+
+                    relations.push(action.relation)
+
+                    return {
+                        ...state,
+                        discussion: {
+                            ...discussion,
+                            relations
+                        },
+                        indexedDiscussion: updated
+                    }
+                } else {
+                    return state
+                }
+
+            } else {
+                // cannot happen
+                return state
+            }
+        }
         default:
             return state
     }
