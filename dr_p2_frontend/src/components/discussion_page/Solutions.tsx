@@ -25,11 +25,12 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import i18n from 'i18next'
 
 import { AppState } from '../../store/index'
-import { addDialog, solutionsSelectPage } from '../../store/explorer/actions'
-import { postThesis } from '../../store/discussion/actions'
+import { solutionsSelectPage, addSolutionDialog, addThesisDialog, closeAddDialog, pinThesis } from '../../store/explorer/actions'
+import { postThesis, postRelation } from '../../store/discussion/actions'
 import { AddDialogType } from '../../store/explorer/types'
 import SolutionBox from './SolutionBox'
 import ThesisBox from './ThesisBox'
+import { RelationType, Thesis } from '../../store/discussion/types';
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
@@ -38,23 +39,31 @@ const mapStateToProps = (state: AppState) => ({
     page: state.explorer.page,
     addDialogType: state.explorer.addDialogType,
     working: state.discussion.loading,
+    pinnedThesis: state.explorer.pinnedThesis,
+    selectedSolution: state.explorer.selectedSolution
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     openAddSolutionDialog: () => {
-        return dispatch(addDialog(AddDialogType.Solution))
+        return dispatch(addSolutionDialog())
     },
     openAddThesisDialog: () => {
-        return dispatch(addDialog(AddDialogType.Thesis))
+        return dispatch(addThesisDialog())
     },
     closeAddDialog: () => {
-        return dispatch(addDialog(AddDialogType.None))
+        return dispatch(closeAddDialog())
     },
     postThesis: (is_solution: boolean, content: string) => {
         return dispatch(postThesis(is_solution, content))
     },
     gotoPage: (page: number) => {
         return dispatch(solutionsSelectPage(page))
+    },
+    addSupportToSolution: async (thesis: Thesis, solution: Thesis) => {
+        return dispatch(postRelation(thesis, solution, RelationType.support))
+    },
+    unpinThesis: () => {
+        dispatch(pinThesis(null))
     }
 })
 
@@ -91,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Solutions : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles();
 
-    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working } = props
+    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working, addSupportToSolution, pinnedThesis, selectedSolution, unpinThesis } = props
     var { page } = props
     const { solutions, theses, invertedSupports, unbindedTheses } = indexedDiscussion
 
@@ -149,6 +158,18 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         }
     }
 
+    const handleSupportToSolutionConfirm = () => {
+        if (pinnedThesis && selectedSolution) {
+            closeAddDialog()
+
+            addSupportToSolution(pinnedThesis, selectedSolution).then(() => {
+                unpinThesis()
+            })
+        } else {
+            console.error('clicked confirm in support solution dialog without either pinned thesis or selected solution')
+        }
+    }
+
     const fromSol = Math.max(0, page - pageShift);
     const toSol = Math.min(fromSol + visibleSolutions - (page === 0 ? pageShift : 0), solutions.length)
 
@@ -160,7 +181,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
 
         for (let thesis of Object.values(unbindedTheses)) {
             thesesElements.push(
-                <Grid item xs={12}>
+                <Grid item xs={12} key={thesis.id}>
                     <ThesisBox thesis={thesis}/>
                 </Grid>
             )
@@ -179,7 +200,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     }
 
     for (let i = fromSol; i < toSol; ++i) {
-        console.log(fromSol, toSol,i)
+        //console.log(fromSol, toSol,i)
         const solution = solutions[i];
 
         const thesesElements : JSX.Element[] = []
@@ -190,7 +211,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                 const thesis = theses[thesisId]
     
                 thesesElements.push(
-                    <Grid item xs={12}>
+                    <Grid item xs={12} key={thesis.id}>
                         <ThesisBox thesis={thesis}/>
                     </Grid>
                 )
@@ -211,7 +232,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
 
     if (solutionColumns.length === 0) {
         solutionColumns.push(
-            <Grid item xs={12} key={0}>
+            <Grid item xs={12} key={'-'}>
                 <Typography>{i18n.t('no solutions yet')}</Typography>
             </Grid>
         )
@@ -245,7 +266,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                 <AddIcon/>
             </Fab>
             }
-            <Dialog open={addDialogType !== AddDialogType.None} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
+            <Dialog open={addDialogType === AddDialogType.Solution || addDialogType === AddDialogType.Relation} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
                 <DialogTitle>
                     {i18n.t(addDialogType === AddDialogType.Solution ? 'add solution' : 'add thesis')}
                     <Button onClick={addDialogType === AddDialogType.Solution ? openAddThesisDialog : openAddSolutionDialog}>{i18n.t(addDialogType === AddDialogType.Solution ? 'A thesis' : 'A solution')}</Button>
@@ -273,6 +294,20 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                     </Button>
                     <Button onClick={submitThesis} color="primary">
                         {i18n.t('Submit')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={addDialogType === AddDialogType.SupportToSolution} onClose={closeAddDialog} area-labelledby="form-dialog-title">
+                <DialogTitle>{i18n.t('support')}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{i18n.t('add pinned thesis to solution')}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeAddDialog} color="primary">
+                        {i18n.t('Cancel')}
+                    </Button>
+                    <Button onClick={handleSupportToSolutionConfirm} color="primary">
+                        {i18n.t('Add')}
                     </Button>
                 </DialogActions>
             </Dialog>

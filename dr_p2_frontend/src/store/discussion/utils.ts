@@ -41,10 +41,18 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
         supported.push(relation.thesis2)
         inv.push(relation.thesis1)
 
+        let unbindedTheses = indexedDiscussion.unbindedTheses
+        if (relation.thesis1 in unbindedTheses) {
+            unbindedTheses = {...unbindedTheses}
+
+            delete unbindedTheses[relation.thesis1]
+        }
+
         return [{
             ...indexedDiscussion,
             supports,
-            invertedSupports
+            invertedSupports,
+            unbindedTheses
         }, true]
 
     case RelationType.contradiction:
