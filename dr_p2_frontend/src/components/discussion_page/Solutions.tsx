@@ -266,7 +266,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                 <AddIcon/>
             </Fab>
             }
-            <Dialog open={addDialogType === AddDialogType.Solution || addDialogType === AddDialogType.Relation} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
+            <Dialog open={addDialogType === AddDialogType.Solution || addDialogType === AddDialogType.Thesis} onClose={closeAddDialog} aria-labelledby="form-dialog-title">
                 <DialogTitle>
                     {i18n.t(addDialogType === AddDialogType.Solution ? 'add solution' : 'add thesis')}
                     <Button onClick={addDialogType === AddDialogType.Solution ? openAddThesisDialog : openAddSolutionDialog}>{i18n.t(addDialogType === AddDialogType.Solution ? 'A thesis' : 'A solution')}</Button>
