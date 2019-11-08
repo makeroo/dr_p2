@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 
 //import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper'
 import ShareIcon from '@material-ui/icons/Share'
 import ThumbDownAltOutlinedIcon from '@material-ui/icons/ThumbDownAltOutlined'
 //import ThumbDownIcon from '@material-ui/icons/ThumbDown'
@@ -12,7 +11,7 @@ import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined'
 
 import { AppState } from '../../store/index'
 import { Thesis } from '../../store/discussion/types';
-import { Theme, makeStyles, createStyles, IconButton, Typography } from '@material-ui/core'
+import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardHeader, CardActions } from '@material-ui/core'
 import { pinThesis } from '../../store/explorer/actions'
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
@@ -39,22 +38,17 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: theme.spacing(.25),
         },
         share: {
-            padding: '0 0 0 4px',
-            float: 'right',
+            marginLeft: 'auto',
             '&.selected': {
                 color: selectedColor,
             }
         },
         up: {
-            padding: 0,
-            float: 'left',
             '&.selected': {
                 color: selectedColor,
             }
         },
         down: {
-            padding: '0 4px',
-            float: 'left',
             '&.selected': {
                 color: selectedColor,
             }
@@ -75,18 +69,22 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
     }
 
     return (
-        <Paper className={classes.thesis}>
-            <IconButton className={shareClass} onClick={togglePin}>
-                <ShareIcon/>
-            </IconButton>
-            <IconButton className={classes.up}>
-                <ThumbUpAltOutlinedIcon/>
-            </IconButton>
-            <IconButton className={classes.down}>
-                <ThumbDownAltOutlinedIcon/>
-            </IconButton>
-            <Typography>{thesis.content}</Typography>
-        </Paper>
+        <Card className={classes.thesis}>
+            <CardActions>
+                <IconButton className={classes.up}>
+                    <ThumbUpAltOutlinedIcon/>
+                </IconButton>
+                <IconButton className={classes.down}>
+                    <ThumbDownAltOutlinedIcon/>
+                </IconButton>
+                <IconButton className={shareClass} onClick={togglePin}>
+                    <ShareIcon/>
+                </IconButton>
+            </CardActions>
+            <CardActionArea>
+                <Typography>{thesis.content}</Typography>
+            </CardActionArea>
+        </Card>
     )
 }
 
