@@ -40,7 +40,7 @@ const mapStateToProps = (state: AppState) => ({
     addDialogType: state.explorer.addDialogType,
     working: state.discussion.loading,
     pinnedThesis: state.explorer.pinnedThesis,
-    selectedSolution: state.explorer.selectedSolution,
+    tappedThesis: state.explorer.tappedThesis,
     canAddSupport: state.explorer.canAddSupport,
     canAddContradiction: state.explorer.canAddContradiction
 })
@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Solutions : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles();
 
-    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working, addRelation, pinnedThesis, selectedSolution, unpinThesis, canAddSupport, canAddContradiction } = props
+    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working, addRelation, pinnedThesis, tappedThesis, unpinThesis, canAddSupport, canAddContradiction } = props
     var { page } = props
     const { solutions, theses, invertedSupports, unbindedTheses } = indexedDiscussion
 
@@ -161,10 +161,10 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     }
 
     const handleSupportToSolutionConfirm = () => {
-        if (pinnedThesis && selectedSolution) {
+        if (pinnedThesis && tappedThesis) {
             closeAddDialog()
 
-            addRelation(pinnedThesis, selectedSolution, RelationType.support).then(() => {
+            addRelation(pinnedThesis, tappedThesis, RelationType.support).then(() => {
                 unpinThesis()
             })
         } else {
@@ -173,20 +173,20 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     }
 
     const handleSupportBetweenThesesConfirm = () => {
-        if (pinnedThesis && selectedSolution && canAddSupport) {
+        if (pinnedThesis && tappedThesis && canAddSupport) {
             closeAddDialog()
 
-            addRelation(pinnedThesis, selectedSolution, RelationType.support).then(() => {
+            addRelation(pinnedThesis, tappedThesis, RelationType.support).then(() => {
                 unpinThesis()
             })
         }
     }
 
     const handleContradictionBetweenThesesConfirm = () => {
-        if (pinnedThesis && selectedSolution && canAddContradiction) {
+        if (pinnedThesis && tappedThesis && canAddContradiction) {
             closeAddDialog()
 
-            addRelation(pinnedThesis, selectedSolution, RelationType.support).then(() => {
+            addRelation(pinnedThesis, tappedThesis, RelationType.support).then(() => {
                 unpinThesis()
             })
         }

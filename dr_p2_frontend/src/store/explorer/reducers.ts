@@ -4,7 +4,7 @@ const initialState : ExplorerState = {
     page: 0,
     addDialogType: AddDialogType.None,
     pinnedThesis: null,
-    selectedSolution: null,
+    tappedThesis: null,
     canAddSupport: false,
     canAddContradiction: false,
 }
@@ -24,7 +24,7 @@ export function explorerReducer (
             return {
                 ...state,
                 addDialogType: action.addDialogType,
-                selectedSolution: action.solution,
+                tappedThesis: action.solution,
                 canAddSupport: action.canAddSupport,
                 canAddContradiction: action.canAddContradiction
             }

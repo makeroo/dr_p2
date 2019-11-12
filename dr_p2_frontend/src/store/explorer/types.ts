@@ -36,7 +36,7 @@ export interface ExplorerState {
     page: number
     addDialogType: AddDialogType
     pinnedThesis: Thesis | null
-    selectedSolution: Thesis | null
+    tappedThesis: Thesis | null
     canAddSupport: boolean
     canAddContradiction: boolean
 }
