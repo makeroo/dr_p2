@@ -7,13 +7,13 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AppState } from '../../store/index'
 import { Thesis } from '../../store/discussion/types';
 import { Card, CardActionArea, Typography } from '@material-ui/core';
-import { supportToSolutionDialog } from '../../store/explorer/actions';
+import { supportToSolutionDialog } from '../../store/discussion_explorer/actions';
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
     thesis: props.thesis,
-    pinnedThesis: state.explorer.pinnedThesis,
-    pinnedThesisSupports: state.explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
-        state.discussion.indexedDiscussion.supports[state.explorer.pinnedThesis.id]
+    pinnedThesis: state.discussion_explorer.pinnedThesis,
+    pinnedThesisSupports: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
+        state.discussion.indexedDiscussion.supports[state.discussion_explorer.pinnedThesis.id]
     ) : [],
 })
 

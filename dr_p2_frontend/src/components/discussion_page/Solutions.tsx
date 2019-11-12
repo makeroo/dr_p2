@@ -25,9 +25,9 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import i18n from 'i18next'
 
 import { AppState } from '../../store/index'
-import { solutionsSelectPage, addSolutionDialog, addThesisDialog, closeAddDialog, pinThesis } from '../../store/explorer/actions'
+import { solutionsSelectPage, addSolutionDialog, addThesisDialog, closeAddDialog, pinThesis } from '../../store/discussion_explorer/actions'
 import { postThesis, postRelation } from '../../store/discussion/actions'
-import { AddDialogType } from '../../store/explorer/types'
+import { AddDialogType } from '../../store/discussion_explorer/types'
 import SolutionBox from './SolutionBox'
 import ThesisBox from './ThesisBox'
 import { RelationType, Thesis } from '../../store/discussion/types';
@@ -36,13 +36,13 @@ const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
     //discussion: state.discussion.discussion!,
     indexedDiscussion: state.discussion.indexedDiscussion!,
-    page: state.explorer.page,
-    addDialogType: state.explorer.addDialogType,
+    page: state.discussion_explorer.page,
+    addDialogType: state.discussion_explorer.addDialogType,
     working: state.discussion.loading,
-    pinnedThesis: state.explorer.pinnedThesis,
-    tappedThesis: state.explorer.tappedThesis,
-    canAddSupport: state.explorer.canAddSupport,
-    canAddContradiction: state.explorer.canAddContradiction
+    pinnedThesis: state.discussion_explorer.pinnedThesis,
+    tappedThesis: state.discussion_explorer.tappedThesis,
+    canAddSupport: state.discussion_explorer.canAddSupport,
+    canAddContradiction: state.discussion_explorer.canAddContradiction
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({

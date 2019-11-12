@@ -30,9 +30,9 @@ export interface PinThesis {
     thesis: Thesis | null
 }
 
-export type ExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialogAction | PinThesis
+export type DiscussionExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialogAction | PinThesis
 
-export interface ExplorerState {
+export interface DiscussionExplorerState {
     page: number
     addDialogType: AddDialogType
     pinnedThesis: Thesis | null

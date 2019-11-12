@@ -12,17 +12,17 @@ import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined'
 import { AppState } from '../../store/index'
 import { Thesis } from '../../store/discussion/types';
 import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardActions } from '@material-ui/core'
-import { pinThesis, relationBetweenThesesDialog } from '../../store/explorer/actions'
+import { pinThesis, relationBetweenThesesDialog } from '../../store/discussion_explorer/actions'
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
     thesis: props.thesis,
-    selected: state.explorer.pinnedThesis === props.thesis,
-    pinnedThesis: state.explorer.pinnedThesis,
-    pinnedThesisSupports: state.explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
-        state.discussion.indexedDiscussion.supports[state.explorer.pinnedThesis.id] || []
+    selected: state.discussion_explorer.pinnedThesis === props.thesis,
+    pinnedThesis: state.discussion_explorer.pinnedThesis,
+    pinnedThesisSupports: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
+        state.discussion.indexedDiscussion.supports[state.discussion_explorer.pinnedThesis.id] || []
     ) : [],
-    pinnedThesisContradictions: state.explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
-        state.discussion.indexedDiscussion.contradictions[state.explorer.pinnedThesis.id] || []
+    pinnedThesisContradictions: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
+        state.discussion.indexedDiscussion.contradictions[state.discussion_explorer.pinnedThesis.id] || []
     ) : [],
 })
 

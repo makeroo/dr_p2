@@ -1,6 +1,6 @@
-import { ExplorerState, ExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG, AddDialogType, PIN_THESIS } from "./types";
+import { DiscussionExplorerState, DiscussionExplorerActionTypes, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG, AddDialogType, PIN_THESIS } from "./types";
 
-const initialState : ExplorerState = {
+const initialState : DiscussionExplorerState = {
     page: 0,
     addDialogType: AddDialogType.None,
     pinnedThesis: null,
@@ -9,10 +9,10 @@ const initialState : ExplorerState = {
     canAddContradiction: false,
 }
 
-export function explorerReducer (
+export function discussionExplorerReducer (
     state = initialState,
-    action: ExplorerActionTypes
-): ExplorerState {
+    action: DiscussionExplorerActionTypes
+): DiscussionExplorerState {
     switch (action.type) {
         case SOLUTIONS_SELECT_PAGE:
             return {

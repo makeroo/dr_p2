@@ -5,19 +5,19 @@ import { AuthState } from './auth/types'
 import { authReducer } from './auth/reducers'
 import { DiscussionState } from './discussion/types'
 import { discussionReducer} from './discussion/reducers'
-import { ExplorerState } from './explorer/types'
-import { explorerReducer } from './explorer/reducers'
+import { DiscussionExplorerState } from './discussion_explorer/types'
+import { discussionExplorerReducer } from './discussion_explorer/reducers'
 
 export interface RootState {
     auth: AuthState
     discussion: DiscussionState
-    explorer: ExplorerState
+    discussion_explorer: DiscussionExplorerState
 }
 
 const rootReducer = combineReducers<RootState>({
     auth: authReducer,
     discussion: discussionReducer,
-    explorer: explorerReducer,
+    discussion_explorer: discussionExplorerReducer,
 });
 
 export type AppState = ReturnType<typeof rootReducer>;
