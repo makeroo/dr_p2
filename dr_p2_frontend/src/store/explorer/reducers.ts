@@ -5,6 +5,8 @@ const initialState : ExplorerState = {
     addDialogType: AddDialogType.None,
     pinnedThesis: null,
     selectedSolution: null,
+    canAddSupport: false,
+    canAddContradiction: false,
 }
 
 export function explorerReducer (
@@ -22,7 +24,9 @@ export function explorerReducer (
             return {
                 ...state,
                 addDialogType: action.addDialogType,
-                selectedSolution: action.solution
+                selectedSolution: action.solution,
+                canAddSupport: action.canAddSupport,
+                canAddContradiction: action.canAddContradiction
             }
 
         case PIN_THESIS:

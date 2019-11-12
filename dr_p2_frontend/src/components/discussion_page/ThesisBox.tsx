@@ -11,18 +11,28 @@ import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined'
 
 import { AppState } from '../../store/index'
 import { Thesis } from '../../store/discussion/types';
-import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardHeader, CardActions } from '@material-ui/core'
-import { pinThesis } from '../../store/explorer/actions'
+import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardActions } from '@material-ui/core'
+import { pinThesis, relationBetweenThesesDialog } from '../../store/explorer/actions'
 
 const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
     thesis: props.thesis,
     selected: state.explorer.pinnedThesis === props.thesis,
+    pinnedThesis: state.explorer.pinnedThesis,
+    pinnedThesisSupports: state.explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
+        state.discussion.indexedDiscussion.supports[state.explorer.pinnedThesis.id] || []
+    ) : [],
+    pinnedThesisContradictions: state.explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
+        state.discussion.indexedDiscussion.contradictions[state.explorer.pinnedThesis.id] || []
+    ) : [],
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     pinMe: (thesis: Thesis | null) => {
         dispatch(pinThesis(thesis))
     },
+    relationBetweenThesesDialog: (thesis: Thesis, canAddSupport: boolean, canAddContradiction: boolean) => {
+        dispatch(relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction))
+    }
 })
 
 type SolutionsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
@@ -59,13 +69,31 @@ const useStyles = makeStyles((theme: Theme) =>
 const ThesisBox : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles()
 
-    const { thesis, selected, pinMe } = props
+    const { thesis, selected, pinMe, pinnedThesis, pinnedThesisSupports, pinnedThesisContradictions, relationBetweenThesesDialog } = props
 
     const shareClass = selected ? `${classes.share} selected` : classes.share
 
     const togglePin = () => {
         // TODO: if there is a selected thesis and it's not me then propose relation
         pinMe(selected ? null : thesis)
+    }
+
+    const handleClick = () => {
+        if (!pinnedThesis) {
+            console.log('pin a thesis first') // TODO: notify user
+            return
+        }
+
+        const canAddSupport = pinnedThesisSupports.indexOf(thesis.id) === -1
+        const canAddContradiction = pinnedThesisContradictions.indexOf(thesis.id) === -1
+
+        if (!canAddSupport && !canAddContradiction) {
+            console.log('pinned thesis already supports *and* contradicts me') // TODO: notify user
+
+            return
+        }
+
+        relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction)
     }
 
     return (
@@ -81,7 +109,7 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
                     <ShareIcon/>
                 </IconButton>
             </CardActions>
-            <CardActionArea>
+            <CardActionArea onClick={handleClick}>
                 <Typography>{thesis.content}</Typography>
             </CardActionArea>
         </Card>

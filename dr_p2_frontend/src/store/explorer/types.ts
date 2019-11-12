@@ -9,7 +9,7 @@ export enum AddDialogType {
     Solution,
     Thesis,
     SupportToSolution,
-    Relation, // TODO
+    RelationBetweenTheses,
 }
 
 export interface SolutionsSelectPageAction {
@@ -21,6 +21,8 @@ export interface SolutionsAddDialogAction {
     type: typeof SOLUTIONS_ADD_DIALOG
     addDialogType: AddDialogType
     solution: Thesis | null
+    canAddSupport: boolean
+    canAddContradiction: boolean
 }
 
 export interface PinThesis {
@@ -35,4 +37,6 @@ export interface ExplorerState {
     addDialogType: AddDialogType
     pinnedThesis: Thesis | null
     selectedSolution: Thesis | null
+    canAddSupport: boolean
+    canAddContradiction: boolean
 }

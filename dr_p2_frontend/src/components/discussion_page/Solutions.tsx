@@ -40,7 +40,9 @@ const mapStateToProps = (state: AppState) => ({
     addDialogType: state.explorer.addDialogType,
     working: state.discussion.loading,
     pinnedThesis: state.explorer.pinnedThesis,
-    selectedSolution: state.explorer.selectedSolution
+    selectedSolution: state.explorer.selectedSolution,
+    canAddSupport: state.explorer.canAddSupport,
+    canAddContradiction: state.explorer.canAddContradiction
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
@@ -59,8 +61,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     gotoPage: (page: number) => {
         return dispatch(solutionsSelectPage(page))
     },
-    addSupportToSolution: async (thesis: Thesis, solution: Thesis) => {
-        return dispatch(postRelation(thesis, solution, RelationType.support))
+    addRelation: async (thesis1: Thesis, thesis2: Thesis, type: RelationType) => {
+        return dispatch(postRelation(thesis1, thesis2, type))
     },
     unpinThesis: () => {
         dispatch(pinThesis(null))
@@ -100,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Solutions : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles();
 
-    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working, addSupportToSolution, pinnedThesis, selectedSolution, unpinThesis } = props
+    const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working, addRelation, pinnedThesis, selectedSolution, unpinThesis, canAddSupport, canAddContradiction } = props
     var { page } = props
     const { solutions, theses, invertedSupports, unbindedTheses } = indexedDiscussion
 
@@ -162,7 +164,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         if (pinnedThesis && selectedSolution) {
             closeAddDialog()
 
-            addSupportToSolution(pinnedThesis, selectedSolution).then(() => {
+            addRelation(pinnedThesis, selectedSolution, RelationType.support).then(() => {
                 unpinThesis()
             })
         } else {
@@ -170,7 +172,27 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         }
     }
 
-    const fromSol = Math.max(0, page - pageShift);
+    const handleSupportBetweenThesesConfirm = () => {
+        if (pinnedThesis && selectedSolution && canAddSupport) {
+            closeAddDialog()
+
+            addRelation(pinnedThesis, selectedSolution, RelationType.support).then(() => {
+                unpinThesis()
+            })
+        }
+    }
+
+    const handleContradictionBetweenThesesConfirm = () => {
+        if (pinnedThesis && selectedSolution && canAddContradiction) {
+            closeAddDialog()
+
+            addRelation(pinnedThesis, selectedSolution, RelationType.support).then(() => {
+                unpinThesis()
+            })
+        }
+    }
+
+    const fromSol = Math.max(0, page - pageShift)
     const toSol = Math.min(fromSol + visibleSolutions - (page === 0 ? pageShift : 0), solutions.length)
 
     let solutionColumns : JSX.Element[] = []
@@ -309,6 +331,35 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
                     <Button onClick={handleSupportToSolutionConfirm} color="primary">
                         {i18n.t('Add')}
                     </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={addDialogType === AddDialogType.RelationBetweenTheses} onClose={closeAddDialog} area-labelledby="form-dialog-title">
+                <DialogTitle>{i18n.t(
+                    canAddSupport && canAddContradiction ? 'support or contradiction' :
+                    canAddSupport                        ? 'support'                  :
+                                                           'contradiction'
+                    )}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{i18n.t(
+                        canAddSupport && canAddContradiction ? 'add support or contradiction between theses' :
+                        canAddSupport                        ? 'add support'                                 :
+                                                               'add contradiction'
+                    )}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeAddDialog} color="primary">
+                        {i18n.t('Cancel')}
+                    </Button>
+                    { canAddSupport &&
+                        <Button onClick={handleSupportBetweenThesesConfirm} color="primary">
+                            {i18n.t('Support')}
+                        </Button>
+                    }
+                    { canAddContradiction &&
+                        <Button onClick={handleContradictionBetweenThesesConfirm} color="primary">
+                            {i18n.t('Contradiction')}
+                        </Button>
+                    }
                 </DialogActions>
             </Dialog>
         </React.Fragment>

@@ -15,14 +15,18 @@ export function closeAddDialog () : SolutionsAddDialogAction {
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.None,
-        solution: null
+        solution: null,
+        canAddSupport: false,
+        canAddContradiction: false
     }
 }
 export function addSolutionDialog () : SolutionsAddDialogAction {
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.Solution,
-        solution: null
+        solution: null,
+        canAddSupport: false,
+        canAddContradiction: false
     }
 }
 
@@ -30,7 +34,9 @@ export function addThesisDialog () : SolutionsAddDialogAction {
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.Thesis,
-        solution: null
+        solution: null,
+        canAddSupport: false,
+        canAddContradiction: false
     }
 }
 
@@ -38,7 +44,19 @@ export function supportToSolutionDialog (solution: Thesis) : SolutionsAddDialogA
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.SupportToSolution,
-        solution
+        solution,
+        canAddSupport: false,
+        canAddContradiction: false
+    }
+}
+
+export function relationBetweenThesesDialog (thesis: Thesis, canAddSupport: boolean, canAddContradiction: boolean) {
+    return {
+        type: SOLUTIONS_ADD_DIALOG,
+        addDialogType: AddDialogType.RelationBetweenTheses,
+        solution: thesis,
+        canAddSupport,
+        canAddContradiction
     }
 }
 
