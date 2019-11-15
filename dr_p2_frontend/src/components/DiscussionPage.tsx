@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps, Route } from 'react-router-dom'
 import { useEffect } from 'react'
 import { ThunkDispatch } from 'redux-thunk'
 
@@ -14,6 +14,7 @@ import i18n from 'i18next'
 import { AppState } from '../store/index'
 import { getDiscussion } from '../store/discussion/actions'
 import Solutions from './discussion_page/Solutions'
+import ThesisExplorer from './discussion_page/thesis_explorer/ThesisExplorer'
 
 interface DiscussionRoutingParams {
     id: string
@@ -22,6 +23,7 @@ interface DiscussionRoutingParams {
 const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionRoutingParams>) => {
     return {
         query_id: +props.match!.params.id,
+        baseUrl: props.match!.url,
         loading: state.discussion.loading,
         discussion: state.discussion.discussion,
     }
@@ -36,7 +38,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
 type DiscussionPageProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps<DiscussionRoutingParams>
 
 const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
-    const { query_id, loading, discussion, getDiscussion } = props
+    const { query_id, loading, discussion, getDiscussion, baseUrl } = props
 
     useEffect(() => {
         //console.log('check if query id matches discussion id')
@@ -58,16 +60,19 @@ const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
             <CircularProgress/>
         </Container>
         :
-        <Container>
-            <Grid container>
-                <Grid item xs={12}>
-                    <Typography>{discussion.question}</Typography>
+        <React.Fragment>
+            <Route path={`${baseUrl}/thesis/:tid`} component={ThesisExplorer}/>
+            <Route exact path={`${baseUrl}`}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <Typography>{discussion.question}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Solutions/>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <Solutions/>
-                </Grid>
-            </Grid>
-        </Container>
+            </Route>
+        </React.Fragment>
     )
 }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
+import { withRouter, RouteComponentProps } from 'react-router'
 
 //import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ShareIcon from '@material-ui/icons/Share'
@@ -14,7 +15,14 @@ import { Thesis } from '../../store/discussion/types';
 import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardActions } from '@material-ui/core'
 import { pinThesis, relationBetweenThesesDialog } from '../../store/discussion_explorer/actions'
 
-const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
+
+interface ThesisBoxAttributes {
+    thesis: Thesis
+}
+
+const mapStateToProps = (state: AppState, props: RouteComponentProps<{}> & ThesisBoxAttributes) => ({
+    history: props.history,
+    baseUrl: props.match!.url,
     thesis: props.thesis,
     selected: state.discussion_explorer.pinnedThesis === props.thesis,
     pinnedThesis: state.discussion_explorer.pinnedThesis,
@@ -69,7 +77,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const ThesisBox : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles()
 
-    const { thesis, selected, pinMe, pinnedThesis, pinnedThesisSupports, pinnedThesisContradictions, relationBetweenThesesDialog } = props
+    const { thesis, selected, pinMe, pinnedThesis, pinnedThesisSupports, pinnedThesisContradictions, relationBetweenThesesDialog, history, baseUrl } = props
 
     const shareClass = selected ? `${classes.share} selected` : classes.share
 
@@ -80,7 +88,8 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
 
     const handleClick = () => {
         if (!pinnedThesis) {
-            console.log('pin a thesis first') // TODO: notify user
+            history.push(`${baseUrl}/thesis/${thesis.id}`)
+
             return
         }
 
@@ -116,4 +125,4 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
     )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ThesisBox)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ThesisBox))
