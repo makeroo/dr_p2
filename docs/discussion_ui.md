@@ -17,7 +17,7 @@ are unrelated.
 5. Vote
 
 From the user point of view voting is very much like
-creating relations or content. If I read something or write something, I evaluate it, though there can be some bias whether I'm the author or not.
+creating relations or content. Whether I read something or write something, I evaluate it, though there can be some bias whether I'm the author or not.
 
 Differences between voting and creating content from the system point of view:
 
@@ -30,19 +30,24 @@ Differences between voting and creating content from the system point of view:
 These differences affects problem evaluation and decision
 making process so the user *has* to be aware of it.
 
-When the user see content it should see voting to and be aware of it:
+When the user see content it should see voting too to and be aware of it:
 
  * content should be as more visible as more voted it is
-   light tint -> rejected
-   darker shades of tint -> accepted
-      the greater up/down votes ratio the darker
+
+   * light tint -> rejected
+
+   * darker shades of tint -> accepted
+
+     the greater up/down votes ratio the darker
 
  * the tint should show if the user vote is aligned to
    the overall votes or not
 
-   eg. purple: disaccord, the user voted contrary to the
+   eg. *purple*: disaccord, the user voted contrary to the
                majority of the others
-       green: accord, the user voted accordinglu to the
+
+     *green*: accord, the user voted accordinglu to the
                majority of the others
-       black: the user did not express a vote
+
+     *black*: the user did not express a vote
 
