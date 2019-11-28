@@ -1,24 +1,76 @@
-import { Discussion, IndexedDiscussion, RelationType, RelationIndex, Relation } from "./types";
+import { Discussion, IndexedDiscussion, RelationType, Relation, Voting, VoteSummary, VotedThesis, VotedRelation, ThesesRelationIndex, ThesisRelation } from "./types";
 
-function updateIndex (index: RelationIndex, k: number, v:number) {
-    var ids = index[k]
-    if (ids === undefined) {
-        ids = []
-        index[k] = ids
+export function newVoteSummary (id: number) : VoteSummary {
+    return {
+        id,
+        vote: null,
+        ups: 0,
+        downs: 0
+    }
+}
+
+function updateIndex (index: ThesesRelationIndex, from: number, to: VotedThesis, relation:VotedRelation) {
+    var destinations = index[from]
+
+    if (destinations === undefined) {
+        destinations = []
+        index[from] = destinations
     }
 
-    ids.push(v)
+    destinations.push({
+        to,
+        relation
+    })
+}
+
+export function findThesis (id: number, vvrr : ThesisRelation[]) : boolean {
+    for (let x in vvrr) {
+        if (vvrr[x].to.thesis.id === id) {
+            return true
+        }
+    }
+
+    return false
 }
 
 export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Relation) : [IndexedDiscussion, boolean] {
+    if (indexedDiscussion.relations[relation.id]) {
+        return [indexedDiscussion, false]
+    }
+
+    const voted_thesis1 = indexedDiscussion.theses[relation.thesis1]
+
+    if (!voted_thesis1) {
+        console.error('unknown thesis1 in', relation)
+        return [indexedDiscussion, false]
+    }
+
+    const voted_thesis2 = indexedDiscussion.theses[relation.thesis2]
+
+    if (!voted_thesis2) {
+        console.error('unknown thesis2 in', relation)
+        return [indexedDiscussion, false]
+    }
+
+    const voted_relation : VotedRelation = {
+        relation,
+        vote: newVoteSummary(relation.id)
+    }
+
+    let relations = {...indexedDiscussion.relations}
+
+    relations[relation.id] = voted_relation
+
     switch (relation.type) {
     case RelationType.support:
         let supported = indexedDiscussion.supports[relation.thesis1]
 
-        if (supported && supported.indexOf(relation.thesis2) !== -1) {
+/* it should NOT happen
+        if (supported && findThesis(relation.thesis2, supported)) {
+            // FIXME: indexedDiscussion has changed
             return [indexedDiscussion, false]
         }
-
+*/
         let supports = {...indexedDiscussion.supports}
         let invertedSupports = {...indexedDiscussion.invertedSupports}
 
@@ -38,8 +90,14 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             invertedSupports[relation.thesis2] = inv
         }
 
-        supported.push(relation.thesis2)
-        inv.push(relation.thesis1)
+        supported.push({
+            to: voted_thesis2,
+            relation: voted_relation
+        })
+        inv.push({
+            to: voted_thesis1,
+            relation: voted_relation
+        })
 
         let unbindedTheses = indexedDiscussion.unbindedTheses
         if (relation.thesis1 in unbindedTheses) {
@@ -50,6 +108,7 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
 
         return [{
             ...indexedDiscussion,
+            relations,
             supports,
             invertedSupports,
             unbindedTheses
@@ -58,10 +117,12 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
     case RelationType.contradiction:
         let contradicted = indexedDiscussion.contradictions[relation.thesis1]
 
-        if (contradicted && contradicted.indexOf(relation.thesis2) !== -1) {
+/* this SHOULD not happen
+
+        if (contradicted && findThesis(relation.thesis2, contradicted)) {
             return [indexedDiscussion, false]
         }
-
+*/
         let contradictions = {...indexedDiscussion.contradictions}
 
         if (contradicted) {
@@ -71,7 +132,10 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             contradictions[relation.thesis1] = contradicted
         }
 
-        contradicted.push(relation.thesis2)
+        contradicted.push({
+            to: voted_thesis2,
+            relation: voted_relation
+        })
 
         contradicted = contradictions[relation.thesis2]
 
@@ -82,18 +146,23 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             contradictions[relation.thesis2] = contradicted
         }
 
-        contradicted.push(relation.thesis1)
+        contradicted.push({
+            to: voted_thesis1,
+            relation: voted_relation
+        })
 
         return [{
             ...indexedDiscussion,
+            relations,
             contradictions
         }, true]
     }
 }
 
-export function indexDiscussion (discussion: Discussion): IndexedDiscussion {
+export function indexDiscussion (discussion: Discussion, voting: Voting | null): IndexedDiscussion {
     var r : IndexedDiscussion = {
         theses: {},
+        relations: {},
         solutions: [],
         supports: {},
         invertedSupports: {},
@@ -102,17 +171,43 @@ export function indexDiscussion (discussion: Discussion): IndexedDiscussion {
     }
 
     for (let thesis of discussion.theses) {
-        r.theses[thesis.id] = thesis
+        let vt : VotedThesis = {
+            thesis,
+            vote: newVoteSummary(thesis.id)
+        }
+
+        r.theses[thesis.id] = vt
 
         if (thesis.solution) {
-            r.solutions.push(thesis)
+            r.solutions.push(vt)
         } else {
-            r.unbindedTheses[thesis.id] = thesis
+            r.unbindedTheses[thesis.id] = vt
         }
     }
 
     for (let relation of discussion.relations) {
-        let relIndex : RelationIndex, invIndex;
+        const vt1 = r.theses[relation.thesis1]
+
+        if (vt1 === undefined) {
+            console.error('unknown thesis1 in', relation)
+            continue
+        }
+
+        const vt2 = r.theses[relation.thesis2]
+
+        if (vt2 === undefined) {
+            console.error('unknown thesis2 in', relation)
+            continue
+        }
+
+        let vr : VotedRelation = {
+            relation,
+            vote: newVoteSummary(relation.id)
+        }
+
+        r.relations[relation.id] = vr
+
+        let relIndex : ThesesRelationIndex, invIndex;
 
         switch (relation.type) {
             case RelationType.support:
@@ -131,9 +226,9 @@ export function indexDiscussion (discussion: Discussion): IndexedDiscussion {
                 continue
         }
 
-        updateIndex(relIndex, relation.thesis1, relation.thesis2)
+        updateIndex(relIndex, relation.thesis1, vt2, vr)
 
-        updateIndex(invIndex, relation.thesis2, relation.thesis1)
+        updateIndex(invIndex, relation.thesis2, vt1, vr)
     }
 
     return r

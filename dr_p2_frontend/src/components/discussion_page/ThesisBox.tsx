@@ -11,13 +11,14 @@ import ThumbDownAltOutlinedIcon from '@material-ui/icons/ThumbDownAltOutlined'
 import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined'
 
 import { AppState } from '../../store/index'
-import { Thesis } from '../../store/discussion/types';
+import { VotedThesis } from '../../store/discussion/types';
 import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardActions } from '@material-ui/core'
 import { pinThesis, relationBetweenThesesDialog } from '../../store/discussion_explorer/actions'
+import { findThesis } from '../../store/discussion/utils'
 
 
 interface ThesisBoxAttributes {
-    thesis: Thesis
+    thesis: VotedThesis
 }
 
 const mapStateToProps = (state: AppState, props: RouteComponentProps<{}> & ThesisBoxAttributes) => ({
@@ -27,18 +28,18 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<{}> & Thesi
     selected: state.discussion_explorer.pinnedThesis === props.thesis,
     pinnedThesis: state.discussion_explorer.pinnedThesis,
     pinnedThesisSupports: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
-        state.discussion.indexedDiscussion.supports[state.discussion_explorer.pinnedThesis.id] || []
+        state.discussion.indexedDiscussion.supports[state.discussion_explorer.pinnedThesis.thesis.id] || []
     ) : [],
     pinnedThesisContradictions: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
-        state.discussion.indexedDiscussion.contradictions[state.discussion_explorer.pinnedThesis.id] || []
+        state.discussion.indexedDiscussion.contradictions[state.discussion_explorer.pinnedThesis.thesis.id] || []
     ) : [],
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    pinMe: (thesis: Thesis | null) => {
+    pinMe: (thesis: VotedThesis | null) => {
         dispatch(pinThesis(thesis))
     },
-    relationBetweenThesesDialog: (thesis: Thesis, canAddSupport: boolean, canAddContradiction: boolean) => {
+    relationBetweenThesesDialog: (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) => {
         dispatch(relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction))
     }
 })
@@ -88,13 +89,13 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
 
     const handleClick = () => {
         if (!pinnedThesis) {
-            history.push(`${baseUrl}/thesis/${thesis.id}`)
+            history.push(`${baseUrl}/thesis/${thesis.thesis.id}`)
 
             return
         }
 
-        const canAddSupport = pinnedThesisSupports.indexOf(thesis.id) === -1
-        const canAddContradiction = pinnedThesisContradictions.indexOf(thesis.id) === -1
+        const canAddSupport = !findThesis(thesis.thesis.id, pinnedThesisSupports)
+        const canAddContradiction = !findThesis(thesis.thesis.id, pinnedThesisContradictions)
 
         if (!canAddSupport && !canAddContradiction) {
             console.log('pinned thesis already supports *and* contradicts me') // TODO: notify user
@@ -119,7 +120,7 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
                 </IconButton>
             </CardActions>
             <CardActionArea onClick={handleClick}>
-                <Typography>{thesis.content}</Typography>
+                <Typography>{thesis.thesis.content}</Typography>
             </CardActionArea>
         </Card>
     )

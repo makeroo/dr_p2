@@ -30,7 +30,7 @@ import { postThesis, postRelation } from '../../store/discussion/actions'
 import { AddDialogType } from '../../store/discussion_explorer/types'
 import SolutionBox from './SolutionBox'
 import ThesisBox from './ThesisBox'
-import { RelationType, Thesis } from '../../store/discussion/types';
+import { RelationType, VotedThesis } from '../../store/discussion/types';
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
@@ -61,8 +61,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     gotoPage: (page: number) => {
         return dispatch(solutionsSelectPage(page))
     },
-    addRelation: async (thesis1: Thesis, thesis2: Thesis, type: RelationType) => {
-        return dispatch(postRelation(thesis1, thesis2, type))
+    addRelation: async (thesis1: VotedThesis, thesis2: VotedThesis, type: RelationType) => {
+        return dispatch(postRelation(thesis1.thesis, thesis2.thesis, type))
     },
     unpinThesis: () => {
         dispatch(pinThesis(null))
@@ -203,7 +203,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
 
         for (let thesis of Object.values(unbindedTheses)) {
             thesesElements.push(
-                <Grid item xs={12} key={thesis.id}>
+                <Grid item xs={12} key={thesis.thesis.id}>
                     <ThesisBox thesis={thesis}/>
                 </Grid>
             )
@@ -226,14 +226,14 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         const solution = solutions[i];
 
         const thesesElements : JSX.Element[] = []
-        const supports = invertedSupports[solution.id]
+        const supports = invertedSupports[solution.thesis.id]
 
         if (supports) {
-            for (let thesisId of invertedSupports[solution.id]) {
-                const thesis = theses[thesisId]
+            for (let votedRelation of invertedSupports[solution.thesis.id]) {
+                const thesis = theses[votedRelation.to.thesis.id]
     
                 thesesElements.push(
-                    <Grid item xs={12} key={thesis.id}>
+                    <Grid item xs={12} key={thesis.thesis.id}>
                         <ThesisBox thesis={thesis}/>
                     </Grid>
                 )
@@ -241,12 +241,12 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         }
 
         solutionColumns.push(
-            <Grid item xs={12} md={4} lg={2} key={solution.id}>
+            <Grid item xs={12} md={4} lg={2} key={solution.thesis.id}>
                 <SolutionBox thesis={solution}/>
             </Grid>
         )
         thesesColumns.push(
-            <Grid item container xs={12} md={4} lg={2} key={solution.id}>
+            <Grid item container xs={12} md={4} lg={2} key={solution.thesis.id}>
                 { thesesElements }
             </Grid>
         )

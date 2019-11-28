@@ -1,4 +1,4 @@
-import { Thesis } from "../discussion/types"
+import { VotedThesis } from "../discussion/types"
 
 export const SOLUTIONS_SELECT_PAGE = 'SOLUTIONS_SELECT_PAGE'
 export const SOLUTIONS_ADD_DIALOG = 'SOLUTIONS_ADD_DIALOG'
@@ -20,14 +20,14 @@ export interface SolutionsSelectPageAction {
 export interface SolutionsAddDialogAction {
     type: typeof SOLUTIONS_ADD_DIALOG
     addDialogType: AddDialogType
-    solution: Thesis | null
+    solution: VotedThesis | null
     canAddSupport: boolean
     canAddContradiction: boolean
 }
 
 export interface PinThesis {
     type: typeof PIN_THESIS
-    thesis: Thesis | null
+    thesis: VotedThesis | null
 }
 
 export type DiscussionExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialogAction | PinThesis
@@ -35,8 +35,8 @@ export type DiscussionExplorerActionTypes = SolutionsSelectPageAction | Solution
 export interface DiscussionExplorerState {
     page: number
     addDialogType: AddDialogType
-    pinnedThesis: Thesis | null
-    tappedThesis: Thesis | null
+    pinnedThesis: VotedThesis | null
+    tappedThesis: VotedThesis | null
     canAddSupport: boolean
     canAddContradiction: boolean
 }

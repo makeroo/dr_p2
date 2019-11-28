@@ -51,3 +51,49 @@ When the user see content it should see voting too to and be aware of it:
 
      *black*: the user did not express a vote
 
+## Exploration
+
+Back to previous point 4: examine and create relations between theses.
+
+Use cases:
+
+ * examine new content
+
+   The user should be able to organize new content.
+   Typical workflow: select an "unread" thesis, search
+   and confront to the other "read" ones.
+
+ * analyze own evaluation: trace own inconsistencies
+
+   The user select an inconsistency, explore the path it comprises of. She/he can either revoke an upvote 
+   thus eliminating the inconsistency or downvote some
+   of its elements if she/he thinks to be right.
+
+ * have a look about how the discussion is going on
+
+   Select a thesis and see which theses it supports,
+   which theses are supporting it, which are in
+   contradiction.
+
+## Examining new content
+
+"Pin" a thesis, that is keep it visible while searching for others.
+
+Search criteria:
+
+ * content
+
+   Free text search.
+
+ * tags
+
+   Let the user classify theses by her/his own criteria.
+
+ * votes
+
+   Not useful.
+
+The user then select the second thesis to create a support or contradiction relationship.
+
+## Analyzing own reputation
+

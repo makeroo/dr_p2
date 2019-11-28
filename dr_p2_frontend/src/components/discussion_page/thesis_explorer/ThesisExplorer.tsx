@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router'
 import { ThunkDispatch } from 'redux-thunk'
 import { Typography, Container, Grid, Link } from '@material-ui/core'
 import i18n from '../../../i18n'
-import { Thesis } from '../../../store/discussion/types'
+import { VotedThesis } from '../../../store/discussion/types'
 import RelathedTheses from './RelathedTheses'
 
 
@@ -16,7 +16,7 @@ interface ThesisRoutingParams {
 const mapStateToProps = (state: AppState, props: RouteComponentProps<ThesisRoutingParams>) => {
     const indexedDiscussion = state.discussion.indexedDiscussion
     const thesis_id = +props.match!.params.tid
-    let thesis : Thesis | null
+    let thesis : VotedThesis | null
 
     if (indexedDiscussion) {
         thesis = indexedDiscussion.theses[thesis_id]
@@ -52,7 +52,7 @@ const ThesisExplorer : React.FC<ThesisPageProps> = (props) => {
     return (
         <Grid container>
             <Grid item xs={12}>
-                <Typography>{thesis.content}</Typography>
+                <Typography>{thesis.thesis.content}</Typography>
             </Grid>
             <Grid item xs={12}>
                 <RelathedTheses/>

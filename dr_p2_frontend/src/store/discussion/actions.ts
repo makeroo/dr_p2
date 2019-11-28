@@ -2,12 +2,15 @@ import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
 import {
-    Discussion, Thesis,
+    Discussion, Thesis, RelationType, Relation, Voting,    
     CreateProblemAction, CREATE_PROBLEM,
     CreatingProblemAction, CREATING_PROBLEM,
     LoadDiscussionAction, LOAD_DISCUSSION,
     AddThesisAction, ADD_THESIS,
-    WorkingOnDiscussionAction, WORKING_ON_DISCUSSION, DiscussionReadyAction, DISCUSSION_READY, RelationType, Relation, AddRelationAction, ADD_RELATION,
+    WorkingOnDiscussionAction, WORKING_ON_DISCUSSION,
+    DiscussionReadyAction, DISCUSSION_READY,
+    AddRelationAction, ADD_RELATION,
+    LoadVotingAction, LOAD_VOTING,
 } from './types'
 
 export function createProblem(id: number, question: string): CreateProblemAction {
@@ -28,6 +31,13 @@ export function loadDiscussion(discussion: Discussion): LoadDiscussionAction {
     return {
         type: LOAD_DISCUSSION,
         discussion
+    }
+}
+
+export function loadVoting(voting: Voting): LoadVotingAction {
+    return {
+        type: LOAD_VOTING,
+        voting
     }
 }
 
@@ -125,6 +135,25 @@ export const getDiscussion = (id: number): ThunkAction<Promise<Discussion>, Load
                 dispatch(loadDiscussion(discussion))
 
                 resolve(discussion)
+            }, 1000)
+        })
+    }
+}
+
+export const getVoting = (id: number): ThunkAction<Promise<Voting>, LoadDiscussionAction, Voting, LoadDiscussionAction> => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Voting> => {
+        dispatch(workingOnDiscussion())
+ 
+        return new Promise<Voting>((resolve) => {
+            setTimeout(() => {
+                const voting : Voting = {
+                    theses_votes: [],
+                    relations_voltes: []
+                }
+
+                dispatch(loadVoting(voting))
+
+                resolve(voting)
             }, 1000)
         })
     }

@@ -1,7 +1,7 @@
 import { DiscussionState, DiscussionActionTypes,
-    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY, ADD_RELATION,
+    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, LOAD_VOTING, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY, ADD_RELATION,
 } from './types'
-import { indexDiscussion, addRelation } from './utils'
+import { indexDiscussion, addRelation, newVoteSummary } from './utils'
 
 const initialState : DiscussionState = {
     loading: false
@@ -22,7 +22,7 @@ export function discussionReducer (
             return {
                 loading: false,
                 discussion: d,
-                indexedDiscussion: indexDiscussion(d)
+                indexedDiscussion: indexDiscussion(d, null)
             }
 
         case CREATING_PROBLEM:
@@ -32,9 +32,22 @@ export function discussionReducer (
 
         case LOAD_DISCUSSION:
             return {
+                ...state,
                 loading: false,
                 discussion: action.discussion,
-                indexedDiscussion: indexDiscussion(action.discussion),
+                indexedDiscussion: indexDiscussion(action.discussion, state.voting || null),
+            }
+
+        case LOAD_VOTING:
+            if (!state.discussion) {
+                return state
+            }
+
+            return {
+                ...state,
+                loading: false,
+                voting: action.voting,
+                indexedDiscussion: indexDiscussion(state.discussion, action.voting)
             }
 
         case WORKING_ON_DISCUSSION:
@@ -54,18 +67,23 @@ export function discussionReducer (
             const indexedDiscussion = state.indexedDiscussion
 
             if (discussion && indexedDiscussion) {
+                let voted_thesis = {
+                    thesis: action.thesis,
+                    vote: newVoteSummary(action.thesis.id)
+                }
+
                 let theses_index = {
                     ...indexedDiscussion.theses
                 }
 
-                theses_index[action.thesis.id] = action.thesis
+                theses_index[action.thesis.id] = voted_thesis
 
                 let solutions, unbindedTheses;
 
                 if (action.thesis.solution) {
                     solutions = [
                         ...indexedDiscussion.solutions,
-                        action.thesis
+                        voted_thesis
                     ]
                     unbindedTheses = indexedDiscussion.unbindedTheses
                 } else {
@@ -74,7 +92,7 @@ export function discussionReducer (
                         ...indexedDiscussion.unbindedTheses,
                     }
 
-                    unbindedTheses[action.thesis.id] = action.thesis
+                    unbindedTheses[action.thesis.id] = voted_thesis
                 }
 
                 return {

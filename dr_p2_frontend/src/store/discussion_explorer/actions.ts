@@ -2,7 +2,7 @@ import {
     AddDialogType,
     SolutionsSelectPageAction, SolutionsAddDialogAction, SOLUTIONS_SELECT_PAGE, SOLUTIONS_ADD_DIALOG, PinThesis, PIN_THESIS
 } from "./types";
-import { Thesis } from "../discussion/types";
+import { VotedThesis } from "../discussion/types";
 
 export function solutionsSelectPage (page: number) : SolutionsSelectPageAction {
     return {
@@ -40,7 +40,7 @@ export function addThesisDialog () : SolutionsAddDialogAction {
     }
 }
 
-export function supportToSolutionDialog (solution: Thesis) : SolutionsAddDialogAction {
+export function supportToSolutionDialog (solution: VotedThesis) : SolutionsAddDialogAction {
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.SupportToSolution,
@@ -50,7 +50,7 @@ export function supportToSolutionDialog (solution: Thesis) : SolutionsAddDialogA
     }
 }
 
-export function relationBetweenThesesDialog (thesis: Thesis, canAddSupport: boolean, canAddContradiction: boolean) {
+export function relationBetweenThesesDialog (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) {
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.RelationBetweenTheses,
@@ -60,7 +60,7 @@ export function relationBetweenThesesDialog (thesis: Thesis, canAddSupport: bool
     }
 }
 
-export function pinThesis (thesis: Thesis | null) : PinThesis {
+export function pinThesis (thesis: VotedThesis | null) : PinThesis {
     return {
         type: PIN_THESIS,
         thesis

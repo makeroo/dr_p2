@@ -1,6 +1,7 @@
 export const CREATE_PROBLEM = 'CREATE_PROBLEM'
 export const CREATING_PROBLEM = 'CREATING_PROBLEM'
 export const LOAD_DISCUSSION = 'LOAD_DISCUSSION'
+export const LOAD_VOTING = 'LOAD_VOTING'
 export const ADD_THESIS = 'ADD_THESIS'
 export const ADD_RELATION = 'ADD_RELATION'
 export const WORKING_ON_DISCUSSION = 'WORKING_ON_DISCUSSION'
@@ -21,6 +22,11 @@ export interface LoadDiscussionAction {
     discussion: Discussion
 }
 
+export interface LoadVotingAction {
+    type: typeof LOAD_VOTING
+    voting: Voting
+}
+
 export interface WorkingOnDiscussionAction {
     type: typeof WORKING_ON_DISCUSSION
 }
@@ -39,7 +45,7 @@ export interface AddRelationAction {
     relation: Relation
 }
 
-export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction | WorkingOnDiscussionAction | DiscussionReadyAction | AddThesisAction | AddRelationAction
+export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction | LoadVotingAction | WorkingOnDiscussionAction | DiscussionReadyAction | AddThesisAction | AddRelationAction
 
 export interface Thesis {
     id: number
@@ -66,7 +72,29 @@ export interface Discussion {
     relations: Relation[]
 }
 
+export enum Vote {
+    Up = 1,
+    Seen = 0,
+    Down = -1,
+}
+
+export interface VoteSummary {
+    // voted object
+    id: number
+    // logged user vote
+    vote: Vote | null
+    // aggregation
+    ups: number,
+    downs: number
+}
+
+export interface Voting {
+    theses_votes: VoteSummary[]
+    relations_voltes: VoteSummary[]
+}
+
 // TODO: define an incremental model: client has a "view" of the whole discussion
+
 export interface DiscussionState {
     /* if discussion is undefined and loading is true then
      * we're loading the whole discussion (or a view of it)
@@ -75,30 +103,54 @@ export interface DiscussionState {
     loading: boolean
 
     discussion?: Discussion
+    voting?: Voting
+
     indexedDiscussion?: IndexedDiscussion
+}
+
+export interface VotedThesis {
+    thesis: Thesis
+    vote: VoteSummary
+}
+
+export interface VotedRelation {
+    relation: Relation
+    vote: VoteSummary
 }
 
 /**
  * Map from thesis id (actually a number) to thesis object.
  */
 interface ThesesIndex {
-    [id: string]: Thesis
+    [id: string]: VotedThesis
+}
+
+/*
+ * Map from relation id (actually a number) to voted relation.
+ */
+interface RelationIndex {
+    [id: string]: VotedRelation
+}
+
+export class ThesisRelation {
+    constructor(public to: VotedThesis, public relation: VotedRelation) {}
 }
 
 /**
  * Map from thesis id (actually a number) to list of thesis id (theoretically a set)
  */
-export interface RelationIndex {
-    [from: string]: number[]
+export interface ThesesRelationIndex {
+    [from: string]: ThesisRelation[]
 }
 
 export interface IndexedDiscussion {
     theses: ThesesIndex
-    solutions: Thesis[]
+    solutions: VotedThesis[]
+    relations: RelationIndex
 
-    supports: RelationIndex
-    invertedSupports: RelationIndex
-    contradictions: RelationIndex
+    supports: ThesesRelationIndex
+    invertedSupports: ThesesRelationIndex
+    contradictions: ThesesRelationIndex
 
     /**
      * Theses that do not support other theses.

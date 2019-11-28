@@ -5,20 +5,21 @@ import { ThunkDispatch } from 'redux-thunk'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import { AppState } from '../../store/index'
-import { Thesis } from '../../store/discussion/types';
+import { VotedThesis } from '../../store/discussion/types';
 import { Card, CardActionArea, Typography } from '@material-ui/core';
 import { supportToSolutionDialog } from '../../store/discussion_explorer/actions';
+import { findThesis } from '../../store/discussion/utils';
 
-const mapStateToProps = (state: AppState, props: { thesis: Thesis }) => ({
+const mapStateToProps = (state: AppState, props: { thesis: VotedThesis }) => ({
     thesis: props.thesis,
     pinnedThesis: state.discussion_explorer.pinnedThesis,
     pinnedThesisSupports: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
-        state.discussion.indexedDiscussion.supports[state.discussion_explorer.pinnedThesis.id]
+        state.discussion.indexedDiscussion.supports[state.discussion_explorer.pinnedThesis.thesis.id]
     ) : [],
 })
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    supportToSolutionDialog: (solution: Thesis) => {
+    supportToSolutionDialog: (solution: VotedThesis) => {
         dispatch(supportToSolutionDialog(solution))
     }
 })
@@ -44,7 +45,7 @@ const SolutionBox : React.FC<SolutionsProps> = (props) => {
     const handleClick = () => {
         if (!pinnedThesis) {
             console.log('pin a thesis first') // TODO: notify user
-        } else if (pinnedThesisSupports && pinnedThesisSupports.indexOf(thesis.id) >= 0) {
+        } else if (pinnedThesisSupports && findThesis(thesis.thesis.id, pinnedThesisSupports)) {
             console.log('thesis already supports solution') // TODO: notify user
         } else {
             supportToSolutionDialog(thesis)
@@ -54,7 +55,7 @@ const SolutionBox : React.FC<SolutionsProps> = (props) => {
     return (
         <Card className={classes.solution}>
             <CardActionArea className={classes.content} onClick={handleClick}>
-                <Typography paragraph>{thesis.content}</Typography>
+                <Typography paragraph>{thesis.thesis.content}</Typography>
             </CardActionArea>
         </Card>
     )
