@@ -1,8 +1,9 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
-import { QueryState, DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN, AuthActionTypes } from './types'
-import { AppState } from '..'
+import { QueryState, DeclareNameAction, PendingRequestAction, NotLoggedInAction, DECLARE_NAME, PENDING_REQUEST, NOT_LOGGED_IN } from './types'
+//import { AppState } from '..'
+import AuthenticationService from '../../services/AuthenticationService'
 
 export function declareName(name: string): DeclareNameAction {
     return {
@@ -11,10 +12,9 @@ export function declareName(name: string): DeclareNameAction {
     }
 }
 
-export function pendingRequest(promise: Promise<AuthActionTypes>, state: QueryState): PendingRequestAction {
+export function pendingRequest(state: QueryState): PendingRequestAction {
     return {
         type: PENDING_REQUEST,
-        promise,
         state
     }
 }
@@ -25,49 +25,33 @@ export function notLoggedIn(): NotLoggedInAction {
     }
 }
 
-export const login = (username: string): ThunkAction<Promise<AuthActionTypes>, DeclareNameAction, string, DeclareNameAction> => {
+export const login = (authenticationService: AuthenticationService) => (username: string): ThunkAction<Promise<number>, any, string, DeclareNameAction> => {
     // Invoke API
-    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<AuthActionTypes> => {
-        let p = new Promise<AuthActionTypes>((resolve) => {
-            //console.log('Login in progress')
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<number> => {
+        dispatch(pendingRequest(QueryState.signingIn))
 
-            setTimeout(() => {
-                dispatch(declareName(username))
+        return authenticationService.login(username).then((userId) => {
+            dispatch(declareName(username))
 
-                resolve()
-            }, 2000)
-      })
-
-      dispatch(pendingRequest(p, QueryState.signingIn))
-
-      return p
+            return userId
+        })
     }
 }
 
-export const getSessionUser = () : ThunkAction<Promise<AuthActionTypes>, AppState, string, PendingRequestAction> => {
-    return async (dispatch: ThunkDispatch<any, any, AnyAction>, getState: () => AppState): Promise<AuthActionTypes> => {
-        const state = getState()
-        const auth = state.auth
+export const getSessionUser = (authenticationService: AuthenticationService) => () : ThunkAction<Promise<string>, any, string, PendingRequestAction> => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction> /*, getState: () => AppState*/): Promise<string> => {
+        dispatch(pendingRequest(QueryState.checkingSession))
 
-        //console.log('getsess start', auth, new Date())
+        return authenticationService.getSessionUser().then((username) => {
+            dispatch(declareName(username))
 
-        if (auth.pendingRequest !== undefined) {
-            return auth.pendingRequest
-        }
+            return username
+        }).catch((error) => {
+            console.debug('not logged in:', error)
 
-        let p = new Promise<AuthActionTypes>((resolve) => {
-            //console.log('pendingRequest request in progress')
+            dispatch(notLoggedIn())
 
-            setTimeout(() => {
-                //console.log('pendingRequest done')
-                //dispatch(notLoggedIn())
-                dispatch(declareName('pippo'))
-            }, 500)
+            throw error
         })
-
-        //console.log('pendingRequest defined')
-        dispatch(pendingRequest(p, QueryState.checkingSession))
-
-        return p
     }
 }

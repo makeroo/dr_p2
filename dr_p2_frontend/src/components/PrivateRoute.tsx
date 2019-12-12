@@ -8,7 +8,7 @@ import { AppState } from '../store/index'
 
 import WelcomePage from './WelcomePage'
 import Loading from './Loading'
-import { getSessionUser } from '../store/auth/actions'
+import actions from '../context'
 import { QueryState } from '../store/auth/types'
 
 // this is what PrivateRoute fc receives
@@ -27,7 +27,7 @@ const mapStateToProps = (state: AppState, props: PrivateRouteTagProps) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     getSessionUser: async () => {
-        dispatch(getSessionUser())
+        dispatch(actions.auth.getSessionUser())
     }
 })
 

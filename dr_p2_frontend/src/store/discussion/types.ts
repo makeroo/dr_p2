@@ -1,3 +1,5 @@
+import { ThunkAction } from "redux-thunk"
+
 export const CREATE_PROBLEM = 'CREATE_PROBLEM'
 export const CREATING_PROBLEM = 'CREATING_PROBLEM'
 export const LOAD_DISCUSSION = 'LOAD_DISCUSSION'
@@ -46,6 +48,22 @@ export interface AddRelationAction {
 }
 
 export type DiscussionActionTypes = CreateProblemAction | CreatingProblemAction | LoadDiscussionAction | LoadVotingAction | WorkingOnDiscussionAction | DiscussionReadyAction | AddThesisAction | AddRelationAction
+
+export interface DiscussionActions {
+    createProblem (id: number, question: string): CreateProblemAction
+    creatingProblem(): CreatingProblemAction
+    loadDiscussion(discussion: Discussion): LoadDiscussionAction
+    loadVoting(voting: Voting): LoadVotingAction
+    workingOnDiscussion(): WorkingOnDiscussionAction
+    discussionReady(): DiscussionReadyAction
+    addThesis(thesis: Thesis): AddThesisAction
+    addRelation(relation: Relation): AddRelationAction
+    newProblem(question: string): ThunkAction<Promise<number>, CreateProblemAction, number, CreateProblemAction>
+    getDiscussion(id: number): ThunkAction<Promise<Discussion>, LoadDiscussionAction, Discussion, LoadDiscussionAction>
+    getVoting(id: number): ThunkAction<Promise<Voting>, LoadDiscussionAction, Voting, LoadDiscussionAction>
+    postThesis(is_solution: boolean, content: string): ThunkAction<Promise<Thesis>, AddThesisAction, Thesis, AddThesisAction>
+    postRelation(thesis1: Thesis, thesis2: Thesis, relationType: RelationType): ThunkAction<Promise<Relation>, AddRelationAction, Relation, AddRelationAction>
+}
 
 export interface Thesis {
     id: number

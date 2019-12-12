@@ -12,6 +12,7 @@ import {
     AddRelationAction, ADD_RELATION,
     LoadVotingAction, LOAD_VOTING,
 } from './types'
+import DiscussionService from '../../services/DiscussionService'
 
 export function createProblem(id: number, question: string): CreateProblemAction {
     return {
@@ -67,140 +68,74 @@ export function addRelation(relation: Relation): AddRelationAction {
     }
 }
 
-export const newProblem = (question: string): ThunkAction<Promise<number>, CreateProblemAction, number, CreateProblemAction> => {
+export const newProblem = (discussionService: DiscussionService) => (question: string): ThunkAction<Promise<number>, CreateProblemAction, number, CreateProblemAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<number> => {
         dispatch(creatingProblem())
 
-        return new Promise<number>((resolve) => {
-            setTimeout(() => {
-                const action = createProblem(1, question)
+        return discussionService.newProblem(question).then((problemId) => {
+            const action = createProblem(problemId, question)
 
-                dispatch(action)
+            dispatch(action)
 
-                resolve(action.id)
-            }, 1000)
+            return problemId
         })
     }
 }
 
-export const getDiscussion = (id: number): ThunkAction<Promise<Discussion>, LoadDiscussionAction, Discussion, LoadDiscussionAction> => {
+export const getDiscussion = (discussionService: DiscussionService) => (id: number): ThunkAction<Promise<Discussion>, LoadDiscussionAction, Discussion, LoadDiscussionAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Discussion> => {
         dispatch(creatingProblem())
- 
-        return new Promise<Discussion>((resolve) => {
-            setTimeout(() => {
-                const discussion = {
-                    id: id,
-                    question: 'ci stiamo dentro?',
-                    theses: [
-                        {
-                            id: 1001,
-                            solution: true,
-                            content: '1',
-                        },
-                        {
-                            id: 1002,
-                            solution: true,
-                            content: '2',
-                        },
-                        {
-                            id: 1003,
-                            solution: true,
-                            content: '3',
-                        },
-                        {
-                            id: 1004,
-                            solution: true,
-                            content: '4',
-                        },
-                        {
-                            id: 1005,
-                            solution: true,
-                            content: '5',
-                        },
-                        {
-                            id: 1006,
-                            solution: true,
-                            content: '6',
-                        },
-                        {
-                            id: 1007,
-                            solution: false,
-                            content: 'a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a ',
-                        },
-                    ],
-                    relations: []
-                }
 
-                dispatch(loadDiscussion(discussion))
+        return Promise.all([
+            discussionService.getDiscussion(id),
+            discussionService.getVoting(id)
+        ]).then(([discussion, voting]) => {
+            dispatch(loadDiscussion(discussion))
+            dispatch(loadVoting(voting))
 
-                resolve(discussion)
-            }, 1000)
+            return discussion
         })
     }
 }
 
-export const getVoting = (id: number): ThunkAction<Promise<Voting>, LoadDiscussionAction, Voting, LoadDiscussionAction> => {
+export const getVoting = (discussionService: DiscussionService) => (id: number): ThunkAction<Promise<Voting>, LoadDiscussionAction, Voting, LoadDiscussionAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Voting> => {
         dispatch(workingOnDiscussion())
  
-        return new Promise<Voting>((resolve) => {
-            setTimeout(() => {
-                const voting : Voting = {
-                    theses_votes: [],
-                    relations_voltes: []
-                }
+        return discussionService.getVoting(id).then((voting) => {
+            dispatch(loadVoting(voting))
 
-                dispatch(loadVoting(voting))
-
-                resolve(voting)
-            }, 1000)
+            return voting
         })
     }
 }
 
-let fake_ids = 10
-export const postThesis = (is_solution: boolean, content: string): ThunkAction<Promise<Thesis>, AddThesisAction, Thesis, AddThesisAction> => {
+export const postThesis = (discussionService: DiscussionService) => (is_solution: boolean, content: string): ThunkAction<Promise<Thesis>, AddThesisAction, Thesis, AddThesisAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Thesis> => {
         dispatch(workingOnDiscussion())
 
-        return new Promise<Thesis>((resolve) => {
-            setTimeout(() => {
-                const thesis = {
-                    id: fake_ids++,
-                    solution: is_solution,
-                    content
-                }
+        return discussionService.postThesis(is_solution, content).then((thesis) => {
 
-                dispatch(addThesis(thesis))
+            dispatch(addThesis(thesis))
 
-                dispatch(discussionReady())
+            dispatch(discussionReady())
 
-                resolve(thesis)
-            }, 1000)
+            return thesis
         })
     }
 }
 
-export const postRelation = (thesis1: Thesis, thesis2: Thesis, relationType: RelationType): ThunkAction<Promise<Relation>, AddRelationAction, Relation, AddRelationAction> => {
+export const postRelation = (discussionService: DiscussionService) => (thesis1: Thesis, thesis2: Thesis, relationType: RelationType): ThunkAction<Promise<Relation>, AddRelationAction, Relation, AddRelationAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Relation> => {
         dispatch(workingOnDiscussion())
 
-        return new Promise<Relation>((resolve) => {
-            setTimeout(() => {
-                const relation = {
-                    id: fake_ids++,
-                    thesis1: thesis1.id,
-                    thesis2: thesis2.id,
-                    type: relationType
-                }
+        return discussionService.postRelation(thesis1, thesis2, relationType).then((relation) => {
 
-                dispatch(addRelation(relation))
+            dispatch(addRelation(relation))
 
-                dispatch(discussionReady())
+            dispatch(discussionReady())
 
-                resolve(relation)
-            }, 1000)
+            return relation
         })
     }
 }

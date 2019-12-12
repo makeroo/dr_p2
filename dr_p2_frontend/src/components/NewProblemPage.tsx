@@ -10,7 +10,7 @@ import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import ButtonWithLoading from '../utils/components/ButtonWithLoading'
 
-import { newProblem } from '../store/discussion/actions'
+import actions from '../context'
 import { RootState } from '../store/index'
 
 type NewProblemPageProps = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>
@@ -22,7 +22,7 @@ const mapStateToProps = (state: RootState, props: RouteComponentProps) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     newProblem: async (question: string) => {
-        return dispatch(newProblem(question))
+        return dispatch(actions.discussion.newProblem(question))
     }
 })
 

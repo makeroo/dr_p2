@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import ButtonWithLoading from '../utils/components/ButtonWithLoading'
 
-import { login } from '../store/auth/actions'
+import actions from '../context'
 import { QueryState } from '../store/auth/types'
 import { RootState } from '../store'
 
@@ -21,7 +21,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     login: async (name: string) => {
-        return dispatch(login(name))
+        return dispatch(actions.auth.login(name))
     }
 })
 

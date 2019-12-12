@@ -12,9 +12,10 @@ import Grid from '@material-ui/core/Grid'
 import i18n from 'i18next'
 
 import { AppState } from '../store/index'
-import { getDiscussion } from '../store/discussion/actions'
+import actions from '../context'
 import Solutions from './discussion_page/Solutions'
 import ThesisExplorer from './discussion_page/thesis_explorer/ThesisExplorer'
+
 
 interface DiscussionRoutingParams {
     id: string
@@ -31,7 +32,7 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionR
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     getDiscussion: async (id: number) => {
-        dispatch(getDiscussion(id))
+        dispatch(actions.discussion.getDiscussion(id))
     }
 })
 

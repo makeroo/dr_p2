@@ -26,11 +26,11 @@ import i18n from 'i18next'
 
 import { AppState } from '../../store/index'
 import { solutionsSelectPage, addSolutionDialog, addThesisDialog, closeAddDialog, pinThesis } from '../../store/discussion_explorer/actions'
-import { postThesis, postRelation } from '../../store/discussion/actions'
 import { AddDialogType } from '../../store/discussion_explorer/types'
 import SolutionBox from './SolutionBox'
 import ThesisBox from './ThesisBox'
 import { RelationType, VotedThesis } from '../../store/discussion/types';
+import actions from '../../context'
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
@@ -56,13 +56,13 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
         return dispatch(closeAddDialog())
     },
     postThesis: (is_solution: boolean, content: string) => {
-        return dispatch(postThesis(is_solution, content))
+        return dispatch(actions.discussion.postThesis(is_solution, content))
     },
     gotoPage: (page: number) => {
         return dispatch(solutionsSelectPage(page))
     },
     addRelation: async (thesis1: VotedThesis, thesis2: VotedThesis, type: RelationType) => {
-        return dispatch(postRelation(thesis1.thesis, thesis2.thesis, type))
+        return dispatch(actions.discussion.postRelation(thesis1.thesis, thesis2.thesis, type))
     },
     unpinThesis: () => {
         dispatch(pinThesis(null))
