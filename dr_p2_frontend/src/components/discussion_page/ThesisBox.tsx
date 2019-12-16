@@ -13,8 +13,8 @@ import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined'
 import { AppState } from '../../store/index'
 import { VotedThesis } from '../../store/discussion/types';
 import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardActions } from '@material-ui/core'
-import { pinThesis, relationBetweenThesesDialog } from '../../store/discussion_explorer/actions'
 import { findThesis } from '../../store/discussion/utils'
+import actions from '../../context'
 
 
 interface ThesisBoxAttributes {
@@ -37,10 +37,10 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<{}> & Thesi
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     pinMe: (thesis: VotedThesis | null) => {
-        dispatch(pinThesis(thesis))
+        dispatch(actions.discussion_explorer.pinThesis(thesis))
     },
     relationBetweenThesesDialog: (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) => {
-        dispatch(relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction))
+        dispatch(actions.discussion_explorer.relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction))
     }
 })
 

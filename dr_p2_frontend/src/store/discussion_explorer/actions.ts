@@ -50,7 +50,7 @@ export function supportToSolutionDialog (solution: VotedThesis) : SolutionsAddDi
     }
 }
 
-export function relationBetweenThesesDialog (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) {
+export function relationBetweenThesesDialog (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) : SolutionsAddDialogAction {
     return {
         type: SOLUTIONS_ADD_DIALOG,
         addDialogType: AddDialogType.RelationBetweenTheses,

@@ -25,7 +25,6 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import i18n from 'i18next'
 
 import { AppState } from '../../store/index'
-import { solutionsSelectPage, addSolutionDialog, addThesisDialog, closeAddDialog, pinThesis } from '../../store/discussion_explorer/actions'
 import { AddDialogType } from '../../store/discussion_explorer/types'
 import SolutionBox from './SolutionBox'
 import ThesisBox from './ThesisBox'
@@ -47,25 +46,25 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     openAddSolutionDialog: () => {
-        return dispatch(addSolutionDialog())
+        return dispatch(actions.discussion_explorer.addSolutionDialog())
     },
     openAddThesisDialog: () => {
-        return dispatch(addThesisDialog())
+        return dispatch(actions.discussion_explorer.addThesisDialog())
     },
     closeAddDialog: () => {
-        return dispatch(closeAddDialog())
+        return dispatch(actions.discussion_explorer.closeAddDialog())
     },
     postThesis: (is_solution: boolean, content: string) => {
         return dispatch(actions.discussion.postThesis(is_solution, content))
     },
     gotoPage: (page: number) => {
-        return dispatch(solutionsSelectPage(page))
+        return dispatch(actions.discussion_explorer.solutionsSelectPage(page))
     },
     addRelation: async (thesis1: VotedThesis, thesis2: VotedThesis, type: RelationType) => {
         return dispatch(actions.discussion.postRelation(thesis1.thesis, thesis2.thesis, type))
     },
     unpinThesis: () => {
-        dispatch(pinThesis(null))
+        dispatch(actions.discussion_explorer.pinThesis(null))
     }
 })
 

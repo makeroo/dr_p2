@@ -32,6 +32,16 @@ export interface PinThesis {
 
 export type DiscussionExplorerActionTypes = SolutionsSelectPageAction | SolutionsAddDialogAction | PinThesis
 
+export interface DiscussionExplorerActions {
+    solutionsSelectPage (page: number) : SolutionsSelectPageAction
+    closeAddDialog () : SolutionsAddDialogAction
+    addSolutionDialog () : SolutionsAddDialogAction
+    addThesisDialog () : SolutionsAddDialogAction
+    supportToSolutionDialog (solution: VotedThesis) : SolutionsAddDialogAction
+    relationBetweenThesesDialog (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) : SolutionsAddDialogAction
+    pinThesis (thesis: VotedThesis | null) : PinThesis
+}
+
 export interface DiscussionExplorerState {
     page: number
     addDialogType: AddDialogType

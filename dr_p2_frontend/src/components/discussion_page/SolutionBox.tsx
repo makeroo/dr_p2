@@ -7,8 +7,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { AppState } from '../../store/index'
 import { VotedThesis } from '../../store/discussion/types';
 import { Card, CardActionArea, Typography } from '@material-ui/core';
-import { supportToSolutionDialog } from '../../store/discussion_explorer/actions';
 import { findThesis } from '../../store/discussion/utils';
+import actions from '../../context'
 
 const mapStateToProps = (state: AppState, props: { thesis: VotedThesis }) => ({
     thesis: props.thesis,
@@ -20,7 +20,7 @@ const mapStateToProps = (state: AppState, props: { thesis: VotedThesis }) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     supportToSolutionDialog: (solution: VotedThesis) => {
-        dispatch(supportToSolutionDialog(solution))
+        dispatch(actions.discussion_explorer.supportToSolutionDialog(solution))
     }
 })
 
