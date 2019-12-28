@@ -139,7 +139,7 @@ export interface VotedRelation {
 /**
  * Map from thesis id (actually a number) to thesis object.
  */
-interface ThesesIndex {
+export interface ThesesIndex {
     [id: string]: VotedThesis
 }
 
