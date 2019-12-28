@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 const Solutions : React.FC<SolutionsProps> = (props) => {
-    const classes = useStyles();
+    const classes = useStyles()
 
     const { indexedDiscussion, openAddSolutionDialog, openAddThesisDialog, closeAddDialog, addDialogType, postThesis, gotoPage, working, addRelation, pinnedThesis, tappedThesis, unpinThesis, canAddSupport, canAddContradiction } = props
     var { page } = props
@@ -140,11 +140,11 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
     const pages = solutions.length + pageShift
 
     if (pages < visibleSolutions) {
-        page = 0;
+        page = 0
     } else if (page < 0) {
-        page = 0;
+        page = 0
     } else if (page > pages - visibleSolutions) {
-        page = pages - visibleSolutions;
+        page = pages - visibleSolutions
     }
 
     const prevPage = () => {
