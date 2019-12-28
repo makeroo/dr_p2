@@ -22,40 +22,96 @@ class DiscussionService {
                         {
                             id: 1001,
                             solution: true,
-                            content: '1',
+                            content: 's1',
                         },
                         {
                             id: 1002,
                             solution: true,
-                            content: '2',
+                            content: 's2',
                         },
                         {
                             id: 1003,
                             solution: true,
-                            content: '3',
+                            content: 's3',
                         },
                         {
                             id: 1004,
                             solution: true,
-                            content: '4',
+                            content: 's4',
                         },
                         {
                             id: 1005,
                             solution: true,
-                            content: '5',
+                            content: 's5',
                         },
                         {
                             id: 1006,
                             solution: true,
-                            content: '6',
+                            content: 's6',
                         },
                         {
                             id: 1007,
                             solution: false,
-                            content: 'a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a ',
+                            content: 't7 a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a a a s s s a a a a a a a a a a ',
+                        },
+                        {
+                            id: 1008,
+                            solution: false,
+                            content: 't8',
+                        },
+                        {
+                            id: 1009,
+                            solution: false,
+                            content: 't9',
+                        },
+                        {
+                            id: 1010,
+                            solution: false,
+                            content: 't10',
+                        },
+                        {
+                            id: 1011,
+                            solution: false,
+                            content: 't11',
+                        },
+                        {
+                            id: 1012,
+                            solution: false,
+                            content: 't12',
                         },
                     ],
-                    relations: []
+                    relations: [
+                        {
+                            id: 2000,
+                            type: 0,
+                            thesis1: 1008,
+                            thesis2: 1001
+                        },
+                        {
+                            id: 2001,
+                            type: 0,
+                            thesis1: 1009,
+                            thesis2: 1002
+                        },
+                        {
+                            id: 2002,
+                            type: 0,
+                            thesis1: 1010,
+                            thesis2: 1003
+                        },
+                        {
+                            id: 2003,
+                            type: 0,
+                            thesis1: 1011,
+                            thesis2: 1008
+                        },
+                        {
+                            id: 2003,
+                            type: 1,
+                            thesis1: 1012,
+                            thesis2: 1008
+                        },
+                    ]
                 }
 
                 resolve(discussion)
