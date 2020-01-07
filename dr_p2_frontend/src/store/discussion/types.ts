@@ -114,9 +114,8 @@ export interface Voting {
 // TODO: define an incremental model: client has a "view" of the whole discussion
 
 export interface DiscussionState {
-    /* if discussion is undefined and loading is true then
-     * we're loading the whole discussion (or a view of it)
-     * otherwise we're working / modifying it
+    /* if loading is true then either we are loading the whole discussion
+     * or we are modifying it
      */
     loading: boolean
 
