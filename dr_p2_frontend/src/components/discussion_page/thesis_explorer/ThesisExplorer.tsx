@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk'
 import { Typography, Container, Grid, Link } from '@material-ui/core'
 import i18n from '../../../i18n'
 import { VotedThesis } from '../../../store/discussion/types'
-import RelathedTheses from './RelathedTheses'
+import RelatedTheses from './RelatedTheses'
 
 
 interface ThesisRoutingParams {
@@ -55,7 +55,7 @@ const ThesisExplorer : React.FC<ThesisPageProps> = (props) => {
                 <Typography>{thesis.thesis.content}</Typography>
             </Grid>
             <Grid item xs={12}>
-                <RelathedTheses/>
+                <RelatedTheses/>
             </Grid>
         </Grid>
     )
