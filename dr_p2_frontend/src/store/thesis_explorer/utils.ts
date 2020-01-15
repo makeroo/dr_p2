@@ -15,11 +15,13 @@ export function relatedTheses(thesis:VotedThesis | undefined, indexedDiscussion:
     const thesisId = thesis.thesis.id
     const allTheses = {...indexedDiscussion.theses}
 
+    delete allTheses[thesis.thesis.id]
+
     const related = {
         unrelatedTheses: allTheses,
-        supportedTheses: indexedDiscussion.supports[thesisId],
-        supportingTheses: indexedDiscussion.invertedSupports[thesisId],
-        contradictingTheses: indexedDiscussion.contradictions[thesisId]
+        supportedTheses: indexedDiscussion.supports[thesisId] || [],
+        supportingTheses: indexedDiscussion.invertedSupports[thesisId] || [],
+        contradictingTheses: indexedDiscussion.contradictions[thesisId] || []
     }
 
     for (let t of related.supportedTheses) {

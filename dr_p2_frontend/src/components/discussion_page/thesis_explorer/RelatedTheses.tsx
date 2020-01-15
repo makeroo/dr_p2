@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useMemo } from 'react'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 
@@ -11,12 +11,20 @@ import { useTheme } from '@material-ui/styles'
 import { AppState } from "../../../store"
 import { relatedTheses } from '../../../store/thesis_explorer/utils'
 import actions from '../../../context'
-import { VotedThesis, ThesesIndex, ThesisRelation } from '../../../store/discussion/types'
+import { VotedThesis, IndexedDiscussion } from '../../../store/discussion/types'
 import ThesisBox from '../ThesisBox'
 import i18n from '../../../i18n'
+import { RouteChildrenProps, withRouter } from 'react-router'
+import useUrlAndStateSyncer from '../../../utils/url_and_state_syncer_effect'
 
-const mapStateToProps = (state: AppState) => {
+
+interface RelatedThesesRoutingParams {
+    tid: string
+}
+
+const mapStateToProps = (state: AppState, props: RouteChildrenProps<RelatedThesesRoutingParams>) => {
     return {
+        referenceThesisId: +props.match!.params.tid,
         indexedDiscussion: state.discussion.indexedDiscussion,
         referenceThesis: state.thesis_explorer.referenceThesis,
         page: state.thesis_explorer.page
@@ -26,6 +34,15 @@ const mapStateToProps = (state: AppState) => {
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
     gotoPage: (page: number) => {
         return dispatch(actions.theses_explorer.selectPage(page))
+    },
+    getThesis: (indexedDiscussion: IndexedDiscussion | undefined, thesisId: number) => {
+        if (indexedDiscussion === undefined) {
+            return
+        }
+
+        let t = indexedDiscussion.theses[thesisId]
+
+        dispatch(actions.theses_explorer.setReferenceThesis(t))
     },
 })
 
@@ -63,9 +80,14 @@ const useStyles = makeStyles((theme: Theme) =>
 const RelatedTheses: React.FC<RelatedThesesProps> = (props) => {
     const classes = useStyles()
 
-    var { referenceThesis, page, indexedDiscussion, gotoPage } = props
+    let { referenceThesisId, referenceThesis, page, indexedDiscussion, gotoPage, getThesis } = props
 
-    const related = useCallback(() => {
+    useUrlAndStateSyncer(
+        () => referenceThesis !== undefined && referenceThesis.thesis.id === referenceThesisId,
+        () => getThesis(indexedDiscussion, referenceThesisId)
+    )
+
+    const related = useMemo(() => {
         return relatedTheses(referenceThesis, indexedDiscussion)
     }, [referenceThesis, indexedDiscussion])
 
@@ -81,21 +103,17 @@ const RelatedTheses: React.FC<RelatedThesesProps> = (props) => {
         visibleSolutions = 1
         pageStep = 1
     } else if (isMedium) {
-        visibleSolutions = 3;
+        visibleSolutions = 3
         pageStep = 1
     } else {
-        visibleSolutions = 6;
+        visibleSolutions = 4
         pageStep = 2
     }
 
-    // four columns here: unrelated, supporting, supported, contradicting
+    // the four columns here: unrelated, supporting, supported, contradicting
     const pages = 4
-//    const page_unrelated = 0
-//    const page_supporting = 1
-//    const page_supported = 2
-//    const page_contradicting = 3
 
-    if (pages < visibleSolutions) {
+    if (pages <= visibleSolutions) {
         page = 0
     } else if (page < 0) {
         page = 0
@@ -118,42 +136,77 @@ const RelatedTheses: React.FC<RelatedThesesProps> = (props) => {
     const fromSol = page
     const toSol = Math.min(fromSol + visibleSolutions, pages)
 
-    let unrelatedColumn : JSX.Element[] = []
-    let supportingColumn : JSX.Element[] = []
-    let supportedColumn : JSX.Element[] = []
-    let contradictingColumn : JSX.Element[] = []
 
-    let { unrelatedTheses, supportedTheses, supportingTheses, contradictingTheses } = related()
+    let { unrelatedTheses, supportedTheses, supportingTheses, contradictingTheses } = related
 
-    function buildColumn (theses: VotedThesis[], column: JSX.Element[], msg: string) {
+    function buildColumn (theses: VotedThesis[], msg: string) : JSX.Element[] {
         if (theses) {
             // TODO: sort
 
-            column.concat(theses.map((votedThesis) =>
-                <ThesisBox thesis={votedThesis}></ThesisBox>
+            return [
+                <Typography key={"h"}>{i18n.t(msg)}</Typography>
+            ].concat(theses.map((votedThesis) =>
+                <ThesisBox thesis={votedThesis} key={votedThesis.thesis.id}></ThesisBox>
             ))
         } else {
-            column.push(
-                <Typography>{i18n.t(msg)}</Typography>
-            )
+            return [
+                <Typography>{i18n.t('none')}</Typography>
+            ]
         }
     }
 
-    buildColumn(Object.values(unrelatedTheses), unrelatedColumn, "no unrelated theses")
-    buildColumn(supportedTheses.map((tr) => {
-        return tr.to
-    }), supportedColumn, "no supported theses")
-    buildColumn(supportingTheses.map((tr) => {
-        let tid = tr.relation.relation.thesis1
+    let columns : JSX.Element[] = []
 
-        return indexedDiscussion?.theses[tid]
-    }).filter((vt) => !!vt) as VotedThesis[], supportingColumn, "no supporting theses")
-    buildColumn(contradictingTheses.map((tr) => {
-        let r = tr.relation.relation
-        let tid = r.thesis1 === referenceThesis?.thesis.id ? r.thesis2 : r.thesis1
+    if (fromSol <= 0 && toSol > 0) {
+        let unrelatedColumn = buildColumn(Object.values(unrelatedTheses), "unrelated theses")
 
-        return indexedDiscussion?.theses[tid]
-    }).filter((vt) => !!vt) as VotedThesis[], contradictingColumn, "no contradicting theses")
+        columns.push(
+            <Grid item xs={12} md={4} lg={3} key={1}>
+                { unrelatedColumn }
+            </Grid>
+        )
+    }
+
+    if (fromSol <= 1 && toSol > 1) {
+        let supportedColumn : JSX.Element[] = buildColumn(supportedTheses.map((tr) => {
+            return tr.to
+        }), "supported theses")
+
+        columns.push(
+            <Grid item xs={12} md={4} lg={3} key={2}>
+                { supportedColumn }
+            </Grid>
+        )
+    }
+
+    if (fromSol <= 2 && toSol > 2) {
+        let supportingColumn : JSX.Element[] = buildColumn(supportingTheses.map((tr) => {
+            let tid = tr.relation.relation.thesis1
+
+            return indexedDiscussion?.theses[tid]
+        }).filter((vt) => !!vt) as VotedThesis[], "supporting theses")
+
+        columns.push(
+            <Grid item xs={12} md={4} lg={3} key={3}>
+                { supportingColumn }
+            </Grid>
+        )
+    }
+
+    if (fromSol <= 3 && toSol > 3) {
+        let contradictingColumn : JSX.Element[] = buildColumn(contradictingTheses.map((tr) => {
+            let r = tr.relation.relation
+            let tid = r.thesis1 === referenceThesis?.thesis.id ? r.thesis2 : r.thesis1
+
+            return indexedDiscussion?.theses[tid]
+        }).filter((vt) => !!vt) as VotedThesis[], "contradicting theses")
+
+        columns.push(
+            <Grid item xs={12} md={4} lg={3} key={4}>
+                { contradictingColumn }
+            </Grid>
+        )
+    }
 
     // layouts:
     // 1 "review new content" mode: unrelated
@@ -171,18 +224,7 @@ const RelatedTheses: React.FC<RelatedThesesProps> = (props) => {
     return (
         <React.Fragment>
             <Grid container>
-                <Grid item xs={12} md={4} lg={2}>
-                    { unrelatedColumn }
-                </Grid>
-                <Grid item xs={12} md={4} lg={2}>
-                    { supportingColumn }
-                </Grid>
-                <Grid item xs={12} md={4} lg={2}>
-                    { supportedColumn }
-                </Grid>
-                <Grid item xs={12} md={4} lg={2}>
-                    { contradictingColumn }
-                </Grid>
+                { columns }
                 { pages > visibleSolutions &&
                     <React.Fragment>
                         <Button aria-label="previous" className={classes.prevPage}
@@ -200,4 +242,4 @@ const RelatedTheses: React.FC<RelatedThesesProps> = (props) => {
     )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RelatedTheses)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RelatedTheses))

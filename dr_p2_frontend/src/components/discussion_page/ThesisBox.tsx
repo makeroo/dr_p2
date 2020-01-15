@@ -23,8 +23,8 @@ interface ThesisBoxAttributes {
 
 const mapStateToProps = (state: AppState, props: RouteComponentProps<{}> & ThesisBoxAttributes) => ({
     history: props.history,
-    baseUrl: props.match!.url,
     thesis: props.thesis,
+    pid: state.discussion.discussion?.id,
     selected: state.discussion_explorer.pinnedThesis === props.thesis,
     pinnedThesis: state.discussion_explorer.pinnedThesis,
     pinnedThesisSupports: state.discussion_explorer.pinnedThesis && state.discussion.indexedDiscussion ? (
@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const ThesisBox : React.FC<SolutionsProps> = (props) => {
     const classes = useStyles()
 
-    const { thesis, selected, pinMe, pinnedThesis, pinnedThesisSupports, pinnedThesisContradictions, relationBetweenThesesDialog, history, baseUrl } = props
+    const { thesis, selected, pinMe, pinnedThesis, pinnedThesisSupports, pinnedThesisContradictions, relationBetweenThesesDialog, history, pid } = props
 
     const shareClass = selected ? `${classes.share} selected` : classes.share
 
@@ -89,7 +89,7 @@ const ThesisBox : React.FC<SolutionsProps> = (props) => {
 
     const handleClick = () => {
         if (!pinnedThesis) {
-            history.push(`${baseUrl}/thesis/${thesis.thesis.id}`)
+            history.push(`/problem/${pid}/thesis/${thesis.thesis.id}`)
 
             return
         }

@@ -43,9 +43,11 @@ export interface DiscussionExplorerActions {
 }
 
 export interface DiscussionExplorerState {
+    // "view configuration" properties (eg. fetched from query string, see dev_query_string branch)
     page: number
-    addDialogType: AddDialogType
     pinnedThesis: VotedThesis | null
+
+    addDialogType: AddDialogType
     tappedThesis: VotedThesis | null
     canAddSupport: boolean
     canAddContradiction: boolean

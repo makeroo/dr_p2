@@ -28,6 +28,7 @@ export interface RelatedTheses {
 }
 
 export interface ThesisExplorerState {
+    // "view configuration" properties (eg. fetched from query string, see dev_query_string branch)
     referenceThesis?: VotedThesis
     page: number
 }
