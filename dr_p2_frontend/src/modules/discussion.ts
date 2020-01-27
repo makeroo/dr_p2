@@ -3,16 +3,16 @@ import {
     createProblem,
     creatingProblem,
     loadDiscussion,
-    loadVoting,
     workingOnDiscussion,
     discussionReady,
     addThesis,
     addRelation,
+    addVote,
     newProblem,
     getDiscussion,
-    getVoting,
     postThesis,
-    postRelation
+    postRelation,
+    postVote
 } from "../store/discussion/actions"
 
 const configureDiscussionActions = (services: AppServices) => {
@@ -20,16 +20,16 @@ const configureDiscussionActions = (services: AppServices) => {
         createProblem,
         creatingProblem,
         loadDiscussion,
-        loadVoting,
         workingOnDiscussion,
         discussionReady,
         addThesis,
         addRelation,
+        addVote,
         newProblem: newProblem(services.discussionService),
         getDiscussion: getDiscussion(services.discussionService),
-        getVoting: getVoting(services.discussionService),
         postThesis: postThesis(services.discussionService),
-        postRelation: postRelation(services.discussionService)
+        postRelation: postRelation(services.discussionService),
+        postVote: postVote(services.discussionService)
     }
 }
 

@@ -1,5 +1,5 @@
 import { DiscussionState, DiscussionActionTypes,
-    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, LOAD_VOTING, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY, ADD_RELATION,
+    CREATE_PROBLEM, CREATING_PROBLEM, LOAD_DISCUSSION, ADD_THESIS, WORKING_ON_DISCUSSION, DISCUSSION_READY, ADD_RELATION, ADD_VOTE,
 } from './types'
 import { indexDiscussion, addRelation, newVoteSummary } from './utils'
 
@@ -13,15 +13,18 @@ export function discussionReducer (
 ): DiscussionState {
     switch (action.type) {
         case CREATE_PROBLEM:
+            const { id, question } = action
             let d = {
-                id: action.id,
-                question: action.question,
+                id,
+                question,
                 theses: [],
                 relations: []
             }
+
             return {
                 loading: false,
-                discussion: d,
+                id,
+                question,
                 indexedDiscussion: indexDiscussion(d, null)
             }
 
@@ -34,20 +37,9 @@ export function discussionReducer (
             return {
                 ...state,
                 loading: false,
-                discussion: action.discussion,
-                indexedDiscussion: indexDiscussion(action.discussion, state.voting || null),
-            }
-
-        case LOAD_VOTING:
-            if (!state.discussion) {
-                return state
-            }
-
-            return {
-                ...state,
-                loading: false,
-                voting: action.voting,
-                indexedDiscussion: indexDiscussion(state.discussion, action.voting)
+                id: action.discussion.id,
+                question: action.discussion.question,
+                indexedDiscussion: indexDiscussion(action.discussion, action.voting),
             }
 
         case WORKING_ON_DISCUSSION:
@@ -63,10 +55,10 @@ export function discussionReducer (
                 }
 
         case ADD_THESIS: {
-            const discussion = state.discussion
-            const indexedDiscussion = state.indexedDiscussion
+            //const discussion = state.discussion
+            const { indexedDiscussion } = state
 
-            if (discussion && indexedDiscussion) {
+            if (indexedDiscussion) {
                 let voted_thesis = {
                     thesis: action.thesis,
                     vote: newVoteSummary(action.thesis.id)
@@ -97,13 +89,6 @@ export function discussionReducer (
 
                 return {
                     ...state,
-                    discussion: {
-                        ...discussion,
-                        theses: [
-                            ...discussion.theses,
-                            action.thesis
-                        ]
-                    },
                     indexedDiscussion: {
                         ...indexedDiscussion,
                         theses: theses_index,
@@ -117,29 +102,41 @@ export function discussionReducer (
             }
         }
         case ADD_RELATION: {
-            const discussion = state.discussion
-            const indexedDiscussion = state.indexedDiscussion
+            const { indexedDiscussion } = state
 
-            if (discussion && indexedDiscussion) {
+            if (indexedDiscussion) {
                 let [updated, r] = addRelation(indexedDiscussion, action.relation)
 
                 if (r) {
-                    let relations = [...discussion.relations]
-
-                    relations.push(action.relation)
-
                     return {
                         ...state,
-                        discussion: {
-                            ...discussion,
-                            relations
-                        },
                         indexedDiscussion: updated
                     }
                 } else {
                     return state
                 }
 
+            } else {
+                // cannot happen
+                return state
+            }
+        }
+        case ADD_VOTE: {
+            const { indexedDiscussion } = state
+
+            if (indexedDiscussion !== undefined) {
+                const { votedThesis } = action
+                let theses = { ...indexedDiscussion.theses }
+
+                theses[votedThesis.thesis.id] = votedThesis
+
+                return {
+                    ...state,
+                    indexedDiscussion: {
+                        ...indexedDiscussion,
+                        theses
+                    }
+                }
             } else {
                 // cannot happen
                 return state

@@ -29,7 +29,7 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<ThesisRouti
     return {
         // it's safe ! here because ThesisExplorer is included by DiscussionPage
         // only when discussion has been fully loaded
-        discussion: state.discussion.discussion!,
+        pid: state.discussion.id,
         thesis,
     }
 }
@@ -52,13 +52,13 @@ const useStyles = makeStyles((theme: Theme) =>
 const ThesisExplorer : React.FC<ThesisPageProps> = (props) => {
     const classes = useStyles()
 
-    const { discussion, thesis } = props
+    const { pid, thesis } = props
 
     if (!thesis) {
         return (
             <Container>
                 <Typography>{i18n.t('thesis not found')}</Typography>
-                <Link to={`/problem/${discussion.id}`}>{i18n.t('return to discussion')}</Link>
+                <Link to={`/problem/${pid}`}>{i18n.t('return to discussion')}</Link>
             </Container>
         )
     }
@@ -66,7 +66,7 @@ const ThesisExplorer : React.FC<ThesisPageProps> = (props) => {
     return (
         <Grid container>
             <Grid item xs={12}>
-                <Link to={`/problem/${discussion.id}`} aria-label="back" className={classes.back}><ZoomOutMapIcon/></Link>
+                <Link to={`/problem/${pid}`} aria-label="back" className={classes.back}><ZoomOutMapIcon/></Link>
                     {/*DynamicFeed, HomeWork LibraryBooks MeetingRoom QuestionAnswer ZoomOutMap*/}
                 <Typography>{thesis.thesis.content}</Typography>
             </Grid>

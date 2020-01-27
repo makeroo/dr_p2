@@ -2,7 +2,7 @@ import { ThunkDispatch, ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 
 import {
-    Discussion, Thesis, RelationType, Relation, Voting,    
+    Discussion, Thesis, RelationType, Relation, Voting, Vote, VotedThesis,
     CreateProblemAction, CREATE_PROBLEM,
     CreatingProblemAction, CREATING_PROBLEM,
     LoadDiscussionAction, LOAD_DISCUSSION,
@@ -10,8 +10,9 @@ import {
     WorkingOnDiscussionAction, WORKING_ON_DISCUSSION,
     DiscussionReadyAction, DISCUSSION_READY,
     AddRelationAction, ADD_RELATION,
-    LoadVotingAction, LOAD_VOTING,
+    AddVoteAction, ADD_VOTE,
 } from './types'
+
 import DiscussionService from '../../services/DiscussionService'
 
 export function createProblem(id: number, question: string): CreateProblemAction {
@@ -28,16 +29,10 @@ export function creatingProblem(): CreatingProblemAction {
     }
 }
 
-export function loadDiscussion(discussion: Discussion): LoadDiscussionAction {
+export function loadDiscussion(discussion: Discussion, voting: Voting): LoadDiscussionAction {
     return {
         type: LOAD_DISCUSSION,
-        discussion
-    }
-}
-
-export function loadVoting(voting: Voting): LoadVotingAction {
-    return {
-        type: LOAD_VOTING,
+        discussion,
         voting
     }
 }
@@ -68,6 +63,13 @@ export function addRelation(relation: Relation): AddRelationAction {
     }
 }
 
+export function addVote(votedThesis: VotedThesis): AddVoteAction {
+    return {
+        type: ADD_VOTE,
+        votedThesis
+    }
+}
+
 export const newProblem = (discussionService: DiscussionService) => (question: string): ThunkAction<Promise<number>, CreateProblemAction, number, CreateProblemAction> => {
     return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<number> => {
         dispatch(creatingProblem())
@@ -90,22 +92,10 @@ export const getDiscussion = (discussionService: DiscussionService) => (id: numb
             discussionService.getDiscussion(id),
             discussionService.getVoting(id)
         ]).then(([discussion, voting]) => {
-            dispatch(loadDiscussion(discussion))
-            dispatch(loadVoting(voting))
+            dispatch(loadDiscussion(discussion, voting))
+            //dispatch(loadVoting(voting))
 
             return discussion
-        })
-    }
-}
-
-export const getVoting = (discussionService: DiscussionService) => (id: number): ThunkAction<Promise<Voting>, LoadDiscussionAction, Voting, LoadDiscussionAction> => {
-    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<Voting> => {
-        dispatch(workingOnDiscussion())
- 
-        return discussionService.getVoting(id).then((voting) => {
-            dispatch(loadVoting(voting))
-
-            return voting
         })
     }
 }
@@ -136,6 +126,20 @@ export const postRelation = (discussionService: DiscussionService) => (thesis1: 
             dispatch(discussionReady())
 
             return relation
+        })
+    }
+}
+
+export const postVote = (discussionService: DiscussionService) => (votedThesis: VotedThesis, vote: Vote): ThunkAction<Promise<VotedThesis>, AddVoteAction, VotedThesis, AddVoteAction> => {
+    return async (dispatch: ThunkDispatch<any, any, AnyAction>): Promise<VotedThesis> => {
+        dispatch(workingOnDiscussion())
+
+        return discussionService.postVote(votedThesis, vote).then((newThesis) => {
+            dispatch(addVote(newThesis))
+
+            dispatch(discussionReady())
+
+            return newThesis
         })
     }
 }

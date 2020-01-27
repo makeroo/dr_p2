@@ -1,5 +1,6 @@
-import { Discussion, Voting, Thesis, Relation, RelationType } from "../store/discussion/types"
+import { Discussion, Voting, Thesis, Relation, RelationType, Vote, VotedThesis } from "../store/discussion/types"
 import { singleRequest1 } from "../utils/single_request"
+import { summaryChangingVote } from "../store/discussion/utils"
 
 class DiscussionService {
     private fake_ids = 10
@@ -171,6 +172,23 @@ class DiscussionService {
             }, 1000)
         })
     })
+
+    postVote = (votedThesis: VotedThesis, vote: Vote): Promise<VotedThesis> => {
+        if (votedThesis.vote.vote === vote) {
+            return Promise.resolve(votedThesis)
+        }
+
+        return new Promise<VotedThesis>((resolve) => {
+            setTimeout(() => {
+                let newThesis = {
+                    ...votedThesis,
+                    vote: summaryChangingVote(votedThesis.vote, vote)
+                }
+
+                resolve(newThesis)
+            }, 1000)
+        })
+    }
 }
 
 export default DiscussionService

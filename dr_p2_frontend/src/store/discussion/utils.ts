@@ -1,4 +1,4 @@
-import { Discussion, IndexedDiscussion, RelationType, Relation, Voting, VoteSummary, VotedThesis, VotedRelation, ThesesRelationIndex, ThesisRelation } from "./types";
+import { Discussion, IndexedDiscussion, RelationType, Relation, Voting, VoteSummary, VotedThesis, VotedRelation, ThesesRelationIndex, ThesisRelation, Vote } from "./types";
 
 export function newVoteSummary (id: number) : VoteSummary {
     return {
@@ -232,4 +232,33 @@ export function indexDiscussion (discussion: Discussion, voting: Voting | null):
     }
 
     return r
+}
+
+export function summaryChangingVote(summary: VoteSummary, vote: Vote) {
+    if (summary.vote === vote) {
+        return summary
+    }
+
+    const old = summary.vote
+
+    /*   -1   0  +1  old
+    -1    -  -1   0
+    0    +1   -  -1
+    +1   +2  +1   -
+    new
+    cell = new - old
+    -1: downs++
+     0: downs++ ups--
+    +1: downs--
+    -1: ups--
+    +2: ups++ downs--
+    +1: ups++
+    */
+
+    return {
+        ...summary,
+        vote,
+        ups: summary.ups + (vote === Vote.Up ? 1 : 0) - (old === Vote.Up ? 1 : 0),
+        downs: summary.downs + (vote === Vote.Down ? 1 : 0) - (old === Vote.Down ? 1 : 0),
+    }
 }

@@ -26,7 +26,8 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionR
         query_id: +props.match!.params.id,
         baseUrl: props.match!.url,
         loading: state.discussion.loading,
-        discussion: state.discussion.discussion,
+        pid: state.discussion.id,
+        question: state.discussion.question,
     }
 }
 
@@ -38,16 +39,16 @@ type DiscussionPageProps = ReturnType<typeof mapStateToProps> & ReturnType<typeo
 
 
 const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
-    const { query_id, loading, discussion, getDiscussion, baseUrl } = props
+    const { query_id, loading, pid, question, getDiscussion, baseUrl } = props
 
     //console.log('SOLU rendering dp', query_id)
 
     useUrlAndStateSyncer(
-        () => loading || (discussion !== undefined && discussion.id === query_id),
+        () => loading || (pid !== undefined && pid === query_id),
         () => getDiscussion(query_id)
     )
 
-    return (!discussion ?
+    return (!pid ?
         <Container>
             <Typography>{i18n.t('loading discussion')}</Typography>
             <CircularProgress/>
@@ -58,7 +59,7 @@ const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
             <Route exact path={`${baseUrl}`}>
                 <Grid container>
                     <Grid item xs={12}>
-                        <Typography>{discussion.question}</Typography>
+                        <Typography>{question}</Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <Solutions/>
