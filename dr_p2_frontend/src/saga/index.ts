@@ -1,7 +1,7 @@
 import { AppServices } from "../services";
 
 import { SagaMiddleware, Saga } from 'redux-saga'
-import { select, take, call, apply, put, all, Effect } from 'redux-saga/effects'
+import { select, take, apply, put, all, Effect } from 'redux-saga/effects'
 import { QueryState } from "../store/auth/types";
 import { pendingRequest, declareName, notLoggedIn } from "../store/auth/actions";
 import { Thesis, RelationType, VotedThesis, Vote, Discussion, Voting, Relation } from "../store/discussion/types";
