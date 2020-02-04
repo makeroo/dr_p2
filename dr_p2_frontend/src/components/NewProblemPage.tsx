@@ -1,5 +1,4 @@
-import React, { useRef } from 'react';
-import { ThunkDispatch } from 'redux-thunk'
+import React, { useRef, Dispatch } from 'react';
 import { connect } from 'react-redux'
 import { RouteComponentProps } from 'react-router-dom'
 
@@ -10,24 +9,23 @@ import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import ButtonWithLoading from '../utils/components/ButtonWithLoading'
 
-import actions from '../context'
 import { RootState } from '../store/index'
+import { newProblem } from '../saga';
 
 type NewProblemPageProps = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>
 
-const mapStateToProps = (state: RootState, props: RouteComponentProps) => ({
-    history: props.history,
+const mapStateToProps = (state: RootState) => ({
     loading: state.discussion.loading
 })
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>, props: RouteComponentProps) => ({
     newProblem: async (question: string) => {
-        return dispatch(actions.discussion.newProblem(question))
+        dispatch(newProblem(question, props.history))
     }
 })
 
 const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
-    const { newProblem, history } = props
+    const { newProblem } = props
 
     const inputEl = useRef<HTMLInputElement>(null);
 
@@ -35,12 +33,7 @@ const NewProblemPage: React.FC<NewProblemPageProps> = (props) => {
         // TODO: validate form, question is required
 
         if (inputEl && inputEl.current) {
-            newProblem(inputEl.current.value).then((v) => {
-                //console.log('newproblem result:', v)
-                history.push(`/problem/${v}`)
-            }).catch((error) => {
-                console.log('new problem failed', error)
-            })
+            newProblem(inputEl.current.value)
         }
     }
 

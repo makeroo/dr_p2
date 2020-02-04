@@ -1,5 +1,4 @@
-import React, { useRef } from 'react'
-import { ThunkDispatch } from 'redux-thunk'
+import React, { useRef, Dispatch } from 'react'
 import { connect } from 'react-redux'
 
 import i18n from 'i18next'
@@ -9,9 +8,9 @@ import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import ButtonWithLoading from '../utils/components/ButtonWithLoading'
 
-import actions from '../context'
 import { QueryState } from '../store/auth/types'
 import { RootState } from '../store'
+import { login } from '../saga'
 
 type WelcomePageProps = ReturnType<typeof mapDispatchToProps> & ReturnType<typeof mapStateToProps>
 
@@ -19,9 +18,9 @@ const mapStateToProps = (state: RootState) => ({
     state: state.auth.state
 })
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     login: async (name: string) => {
-        return dispatch(actions.auth.login(name))
+        return dispatch(login(name))
     }
 })
 

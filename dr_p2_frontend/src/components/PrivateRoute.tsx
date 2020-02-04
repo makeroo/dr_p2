@@ -1,15 +1,14 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { ComponentType, useEffect } from 'react'
 import { Route, RouteProps } from "react-router-dom"
 import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
 
 import { AppState } from '../store/index'
 
 import WelcomePage from './WelcomePage'
 import Loading from './Loading'
-import actions from '../context'
 import { QueryState } from '../store/auth/types'
+import { fetchSessionUser } from '../saga'
 
 // this is what PrivateRoute fc receives
 type PrivateRouteProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
@@ -25,23 +24,23 @@ const mapStateToProps = (state: AppState, props: PrivateRouteTagProps) => ({
     ...props
 })
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    getSessionUser: async () => {
-        dispatch(actions.auth.getSessionUser())
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    fetchSessionUser: async () => {
+        dispatch(fetchSessionUser())
     }
 })
 
 const PrivateRoute : React.FC<PrivateRouteProps> = (props) => {
-    const { auth, getSessionUser, component, ...rest } = props;
+    const { auth, fetchSessionUser, component, ...rest } = props;
 
     useEffect(() => {
         //console.log('querying session user')
 
-        // note: getSessionUser gets called once per PrivateRoute instance
+        // note: fetchSessionUser gets called once per PrivateRoute instance
         // I could move this block where Router is configured, that is in App component,
         // but I prefer here because App would get cluttered
-        getSessionUser()
-    }, [getSessionUser]) // note: getSessionUser is a closure so it is a new object everytime I'm invoked
+        fetchSessionUser()
+    }, [fetchSessionUser]) // note: fetchSessionUser is a closure so it is a new object everytime I'm invoked
                          // same as passing no array at all
 
     const InnerComponent = component

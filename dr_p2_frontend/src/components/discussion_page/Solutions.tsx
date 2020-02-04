@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { useRef } from 'react'
 import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
@@ -29,7 +28,8 @@ import { AddDialogType } from '../../store/discussion_explorer/types'
 import SolutionBox from './SolutionBox'
 import ThesisBox from './ThesisBox'
 import { RelationType, VotedThesis } from '../../store/discussion/types';
-import actions from '../../context'
+import { addSolutionDialog, addThesisDialog, closeAddDialog, solutionsSelectPage, pinThesis } from '../../store/discussion_explorer/actions';
+import { postRelation, postThesis } from '../../saga';
 
 const mapStateToProps = (state: AppState) => ({
     //theses: state.discussion.discussion!.theses.filter((thesis) => (!thesis.solution))
@@ -44,27 +44,27 @@ const mapStateToProps = (state: AppState) => ({
     canAddContradiction: state.discussion_explorer.canAddContradiction
 })
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     openAddSolutionDialog: () => {
-        return dispatch(actions.discussion_explorer.addSolutionDialog())
+        return dispatch(addSolutionDialog())
     },
     openAddThesisDialog: () => {
-        return dispatch(actions.discussion_explorer.addThesisDialog())
+        return dispatch(addThesisDialog())
     },
     closeAddDialog: () => {
-        return dispatch(actions.discussion_explorer.closeAddDialog())
+        return dispatch(closeAddDialog())
     },
     postThesis: (is_solution: boolean, content: string) => {
-        return dispatch(actions.discussion.postThesis(is_solution, content))
+        return dispatch(postThesis(is_solution, content))
     },
     gotoPage: (page: number) => {
-        return dispatch(actions.discussion_explorer.solutionsSelectPage(page))
+        return dispatch(solutionsSelectPage(page))
     },
     addRelation: async (thesis1: VotedThesis, thesis2: VotedThesis, type: RelationType) => {
-        return dispatch(actions.discussion.postRelation(thesis1.thesis, thesis2.thesis, type))
+        return dispatch(postRelation(thesis1.thesis, thesis2.thesis, type))
     },
     unpinThesis: () => {
-        dispatch(actions.discussion_explorer.pinThesis(null))
+        dispatch(pinThesis(null))
     }
 })
 
@@ -185,7 +185,7 @@ const Solutions : React.FC<SolutionsProps> = (props) => {
         if (pinnedThesis && tappedThesis && canAddContradiction) {
             closeAddDialog()
 
-            addRelation(pinnedThesis, tappedThesis, RelationType.support).then(() => {
+            addRelation(pinnedThesis, tappedThesis, RelationType.contradiction).then(() => {
                 unpinThesis()
             })
         }

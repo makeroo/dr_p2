@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
 import { withRouter, RouteComponentProps } from 'react-router'
 
 import i18n from '../../i18n'
@@ -18,7 +17,8 @@ import { AppState } from '../../store/index'
 import { VotedThesis, Vote } from '../../store/discussion/types'
 import { Theme, makeStyles, createStyles, IconButton, Typography, Card, CardActionArea, CardActions, Popover } from '@material-ui/core'
 import { findThesis } from '../../store/discussion/utils'
-import actions from '../../context'
+import { pinThesis, relationBetweenThesesDialog } from '../../store/discussion_explorer/actions'
+import { postVote } from '../../saga'
 
 
 interface ThesisBoxAttributes {
@@ -39,14 +39,14 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<{}> & Thesi
     ) : [],
 })
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     pinMe: (thesis: VotedThesis | null) => {
-        dispatch(actions.discussion_explorer.pinThesis(thesis))
+        dispatch(pinThesis(thesis))
     },
     relationBetweenThesesDialog: (thesis: VotedThesis, canAddSupport: boolean, canAddContradiction: boolean) => {
-        dispatch(actions.discussion_explorer.relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction))
+        dispatch(relationBetweenThesesDialog(thesis, canAddSupport, canAddContradiction))
     },
-    postVote: (votedThesis: VotedThesis, vote: Vote) => dispatch(actions.discussion.postVote(votedThesis, vote))
+    postVote: (votedThesis: VotedThesis, vote: Vote) => dispatch(postVote(votedThesis, vote))
 })
 
 type SolutionsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>

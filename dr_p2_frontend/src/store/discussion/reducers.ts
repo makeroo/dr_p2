@@ -55,7 +55,6 @@ export function discussionReducer (
                 }
 
         case ADD_THESIS: {
-            //const discussion = state.discussion
             const { indexedDiscussion } = state
 
             if (indexedDiscussion) {

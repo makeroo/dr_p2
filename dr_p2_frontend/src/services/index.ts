@@ -1,8 +1,6 @@
 import AuthenticationService from "./AuthenticationService";
 import DiscussionService from "./DiscussionService";
 
-//export const AppContext = React.createContext(appServices)
-
 const configureServices = async () => {
     const authenticationService = new AuthenticationService()
 

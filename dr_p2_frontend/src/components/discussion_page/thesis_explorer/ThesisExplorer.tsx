@@ -1,9 +1,8 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { connect } from 'react-redux'
 import { AppState } from '../../../store'
 import { RouteComponentProps, withRouter } from 'react-router'
 import { Link } from 'react-router-dom'
-import { ThunkDispatch } from 'redux-thunk'
 import { Typography, Container, Grid, Theme } from '@material-ui/core'
 import i18n from '../../../i18n'
 import { VotedThesis } from '../../../store/discussion/types'
@@ -34,7 +33,7 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<ThesisRouti
     }
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 })
 
 type ThesisPageProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>

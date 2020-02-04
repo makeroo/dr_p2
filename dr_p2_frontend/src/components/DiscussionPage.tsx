@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps, Route } from 'react-router-dom'
-import { ThunkDispatch } from 'redux-thunk'
 
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography'
@@ -11,10 +10,10 @@ import Grid from '@material-ui/core/Grid'
 import i18n from 'i18next'
 
 import { AppState } from '../store/index'
-import actions from '../context'
 import Solutions from './discussion_page/Solutions'
 import ThesisExplorer from './discussion_page/thesis_explorer/ThesisExplorer'
 import useUrlAndStateSyncer from '../utils/url_and_state_syncer_effect'
+import { fetchDiscussion } from '../saga';
 
 
 interface DiscussionRoutingParams {
@@ -31,21 +30,21 @@ const mapStateToProps = (state: AppState, props: RouteComponentProps<DiscussionR
     }
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
-    getDiscussion: async (id: number) => dispatch(actions.discussion.getDiscussion(id))
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    fetchDiscussion: async (id: number) => dispatch(fetchDiscussion(id))
 })
 
 type DiscussionPageProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & RouteComponentProps<DiscussionRoutingParams>
 
 
 const DiscussionPage: React.FC<DiscussionPageProps> = (props) => {
-    const { query_id, loading, pid, question, getDiscussion, baseUrl } = props
+    const { query_id, loading, pid, question, fetchDiscussion, baseUrl } = props
 
     //console.log('SOLU rendering dp', query_id)
 
     useUrlAndStateSyncer(
         () => loading || (pid !== undefined && pid === query_id),
-        () => getDiscussion(query_id)
+        () => fetchDiscussion(query_id)
     )
 
     return (!pid ?

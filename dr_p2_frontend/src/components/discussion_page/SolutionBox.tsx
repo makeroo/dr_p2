@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
@@ -8,7 +7,7 @@ import { AppState } from '../../store/index'
 import { VotedThesis } from '../../store/discussion/types';
 import { Card, CardActionArea, Typography } from '@material-ui/core';
 import { findThesis } from '../../store/discussion/utils';
-import actions from '../../context'
+import { supportToSolutionDialog } from '../../store/discussion_explorer/actions';
 
 const mapStateToProps = (state: AppState, props: { thesis: VotedThesis }) => ({
     thesis: props.thesis,
@@ -18,9 +17,9 @@ const mapStateToProps = (state: AppState, props: { thesis: VotedThesis }) => ({
     ) : [],
 })
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     supportToSolutionDialog: (solution: VotedThesis) => {
-        dispatch(actions.discussion_explorer.supportToSolutionDialog(solution))
+        dispatch(supportToSolutionDialog(solution))
     }
 })
 

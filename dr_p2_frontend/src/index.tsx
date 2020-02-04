@@ -1,11 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import * as serviceWorker from './serviceWorker';
-import configureServices from './services';
-import configureActions from './modules';
+import createSagaMiddleware from 'redux-saga'
+
+import * as serviceWorker from './serviceWorker'
+import configureServices from './services'
 import { Store } from "redux";
-import { registerActions } from './context';
+import { configureSaga } from './saga';
 
 const loadRoot = async () => {
     const module = await import('./components/Root')
@@ -15,23 +16,30 @@ const loadRoot = async () => {
 const render = async (store: Store) => {
     const target = document.getElementById('root')
     const Root = await loadRoot()
-  
+
     ReactDOM.render(<Root store={store}/>, target)
 };
   
 (async function init() {
     Promise.all([
         (async () => {
-            const services = await configureServices();
-            const actions = await configureActions(services); 
- 
-            return actions
+            const services = await configureServices()
+
+            return services
         })(),
         import("./store/index")
-    ]).then(([actions, store]) => {
-        registerActions(actions)
+    ]).then(([services, storeModule]) => {
+        const sagaMiddleware = createSagaMiddleware()
+        const store = storeModule.buildStore(sagaMiddleware)
 
-        render(store.store);
+        return Promise.all([
+            (async () => {
+                await configureSaga(sagaMiddleware, services)
+            })(),
+            store
+        ])
+    }).then(([_, store]) => {
+        render(store)
     }).catch((error) => {
         // TODO
         console.error(error)

@@ -78,8 +78,8 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             supported = [...supported]
         } else {
             supported = []
-            supports[relation.thesis1] = supported
         }
+        supports[relation.thesis1] = supported
 
         let inv = invertedSupports[relation.thesis2]
 
@@ -87,8 +87,8 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             inv = [...inv]
         } else {
             inv = []
-            invertedSupports[relation.thesis2] = inv
         }
+        invertedSupports[relation.thesis2] = inv
 
         supported.push({
             to: voted_thesis2,
@@ -129,8 +129,8 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             contradicted = [...contradicted]
         } else {
             contradicted = []
-            contradictions[relation.thesis1] = contradicted
         }
+        contradictions[relation.thesis1] = contradicted
 
         contradicted.push({
             to: voted_thesis2,
@@ -143,8 +143,8 @@ export function addRelation (indexedDiscussion: IndexedDiscussion, relation: Rel
             contradicted = [...contradicted]
         } else {
             contradicted = []
-            contradictions[relation.thesis2] = contradicted
         }
+        contradictions[relation.thesis2] = contradicted
 
         contradicted.push({
             to: voted_thesis1,

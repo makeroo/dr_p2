@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, Dispatch } from 'react'
 import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { useMediaQuery, Grid, Button, Typography } from '@material-ui/core'
@@ -10,12 +9,13 @@ import { useTheme } from '@material-ui/styles'
 
 import { AppState } from "../../../store"
 import { relatedTheses } from '../../../store/thesis_explorer/utils'
-import actions from '../../../context'
 import { VotedThesis, IndexedDiscussion } from '../../../store/discussion/types'
 import ThesisBox from '../ThesisBox'
 import i18n from '../../../i18n'
 import { RouteChildrenProps, withRouter } from 'react-router'
 import useUrlAndStateSyncer from '../../../utils/url_and_state_syncer_effect'
+import { setReferenceThesis } from '../../../store/thesis_explorer/actions'
+import { solutionsSelectPage } from '../../../store/discussion_explorer/actions'
 
 
 interface RelatedThesesRoutingParams {
@@ -31,9 +31,9 @@ const mapStateToProps = (state: AppState, props: RouteChildrenProps<RelatedThese
     }
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     gotoPage: (page: number) => {
-        return dispatch(actions.theses_explorer.selectPage(page))
+        return dispatch(solutionsSelectPage(page))
     },
     getThesis: (indexedDiscussion: IndexedDiscussion | undefined, thesisId: number) => {
         if (indexedDiscussion === undefined) {
@@ -42,7 +42,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => ({
 
         let t = indexedDiscussion.theses[thesisId]
 
-        dispatch(actions.theses_explorer.setReferenceThesis(t))
+        dispatch(setReferenceThesis(t))
     },
 })
 
