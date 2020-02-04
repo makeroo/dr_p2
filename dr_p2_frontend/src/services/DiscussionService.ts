@@ -11,7 +11,6 @@ class DiscussionService {
                 resolve(1)
             }, 1000)
         })
-
     })
 
     getDiscussion = singleRequest1((id: number): Promise<Discussion> => {
